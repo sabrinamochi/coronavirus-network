@@ -1,6 +1,6 @@
-d3.csv("data/cases_in_NewEngland.csv", parseCSV).then(function(data) {
+d3.csv("data/cases_in_NewEngland.csv", parseCSV).then(function (dataset) {
 
-    var width = document.querySelector("#chart").clientWidth;
+    var width = document.querySelector("#chart").clientWidth * 0.6;
     var height = document.querySelector("#chart").clientHeight;
     var svg = d3.select("#chart")
         .append("svg")
@@ -8,8 +8,12 @@ d3.csv("data/cases_in_NewEngland.csv", parseCSV).then(function(data) {
         .attr("height", height);
     var radius = 20;
 
+    data = dataset.filter(function (d) {
+        return d.name !== "Imported" && d.name !== "Unknown"
+    })
+
     var nodes = [];
-    data.forEach(function(d) {
+    data.forEach(function (d) {
         var datum = {};
         datum.id = d.id;
         datum.infectedFrom = d.infectedFrom;
@@ -20,21 +24,22 @@ d3.csv("data/cases_in_NewEngland.csv", parseCSV).then(function(data) {
         datum.location = d.location;
         datum.gender = d.gender;
         datum.age = d.age;
+        datum.caseType = d.caseType;
         datum.details = d.details;
         nodes.push(datum);
     });
 
 
     var links = [];
-    for(var i = 0; i < data.length-1; i++) {
+    for (var i = 0; i < data.length - 1; i++) {
         var nodeA = data[i];
-        for(var j = i + 1; j < data.length; j++) {
+        for (var j = i + 1; j < data.length; j++) {
             var nodeB = data[j];
-            if(nodeA.name === nodeB.infectedFrom) {
-                links.push({source: nodeA.name, target: nodeB.name});
+            if (nodeA.name === nodeB.infectedFrom) {
+                links.push({ source: nodeA.name, target: nodeB.name });
             }
-            else if (nodeB.name === nodeA.infectedFrom){
-                links.push({source: nodeB.name, target: nodeA.name})
+            else if (nodeB.name === nodeA.infectedFrom) {
+                links.push({ source: nodeB.name, target: nodeA.name })
             }
 
         }
@@ -46,10 +51,11 @@ d3.csv("data/cases_in_NewEngland.csv", parseCSV).then(function(data) {
 
     /* INITIALIZE THE FORCE SIMULATION */
     var simulation = d3.forceSimulation(nodes)
-      .force("link", d3.forceLink(links).id(function(d) { return d.name; }))
-      .force("charge", d3.forceManyBody().strength(.3))
-      .force("center", d3.forceCenter(width / 2, height / 2))
-      .force("collide", d3.forceCollide().radius(radius+10));
+        .force("link", d3.forceLink(links).id(function (d) { return d.name; }).distance(80))
+        .force("charge", d3.forceManyBody().strength(-1))
+        .force("center", d3.forceCenter(width / 2, height / 2))
+        .force("collide", d3.forceCollide().radius(radius * 2))
+        .alpha(.5);
 
     /* DRAW THE LINKS */
     var link = svg.append("g")
@@ -57,8 +63,8 @@ d3.csv("data/cases_in_NewEngland.csv", parseCSV).then(function(data) {
         .data(links)
         .enter()
         .append("line")
-            .attr("stroke", "#CECECE")
-            .attr("stroke-width", 3);
+        .attr("stroke", "#CECECE")
+        .attr("stroke-width", 3);
 
     /* DRAW THE NODES */
     var node = svg.append("g")
@@ -66,45 +72,50 @@ d3.csv("data/cases_in_NewEngland.csv", parseCSV).then(function(data) {
         .data(nodes)
         .enter()
         .append("g");
-    
-    var circle = node.append("circle")
-            .attr("stroke", "#fff")
-            .attr("stroke-width", 1.5)
-            .attr("r", function(d){
-                if(d.infectedFrom === ""){
-                    return radius*2/3;
-                }
-                else{
-                    return radius;
-                }
-            })
-            .attr("fill", function(d) {  
-                if (d.infectionType === "") {
-                    return colorScale(d.name)
-                }
-                else{
-                    return colorScale(d.infectionType);
-                }
-            });
 
-     var label = node.append("text")
-         .text(function (d) {
-             if (d.infectionType !== "") {
-                 return d.name;
-             }
-         })
-         .attr("dx", -6)
-         .style("font-size", "12px")
-         .style("pointer-events", "none");
+    var circle = node.append("circle")
+        .attr("stroke", "#fff")
+        .attr("stroke-width", 1.5)
+        .attr("r", function (d) {
+            if (d.infectionType === "") {
+                return radius * 2 / 3;
+            }
+            else {
+                return radius;
+            }
+        })
+        .attr("fill", function (d) {
+            if (d.infectionType === "") {
+                return colorScale(d.name)
+            }
+            else {
+                return colorScale(d.infectionType);
+            }
+        });
+
+    var label = node.append("text")
+        .attr("class", "circleLabel")
+        .text(function (d) {
+            if (d.infectionType !== "") {
+                return d.name;
+            }
+            else {
+                return d.name.charAt(0);
+            }
+        })
+        .attr("text-anchor", "middle")
+        .attr("dy", 3)
+        .style("font-size", "12px")
+        .style("pointer-events", "none");
 
     /* TICK THE SIMULATION */
-    simulation.on("tick", function() {
-        link.attr("x1", function(d) { return d.source.x; })
-            .attr("y1", function(d) { return d.source.y; })
-            .attr("x2", function(d) { return d.target.x; })
-            .attr("y2", function(d) { return d.target.y; });
+    simulation.on("tick", function () {
+        link.attr("x1", function (d) { return d.source.x; })
+            .attr("y1", function (d) { return d.source.y; })
+            .attr("x2", function (d) { return d.target.x; })
+            .attr("y2", function (d) { return d.target.y; });
 
-        node.attr("transform", function(d){
+        node.attr("transform", function (d) {
             var dx = Math.max(radius, radius, Math.min(width - radius, d.x));
             var dy = Math.max(radius, Math.min(height - radius, d.y));
             return `translate(${dx}, ${dy})`
@@ -116,58 +127,69 @@ d3.csv("data/cases_in_NewEngland.csv", parseCSV).then(function(data) {
     /* ADD A TOOLTIP TO THE NODES */
     var tooltip = d3.select("#chart")
         .append("div")
-        .attr("class","tooltip");
+        .attr("class", "tooltip");
 
-    circle.on("mouseover", function(d) {
-        var cx = d.x + 20;
-        var cy = d.y - 10;
+    circle.on("mouseover", function (d) {
+        var dx = Math.max(radius, radius, Math.min(width - radius, d.x));
+        var dy = Math.max(radius, Math.min(height - radius, d.y));
+        var cx = dx + 20;
+        var cy = dy + 10;
+
+        
 
         tooltip.style("visibility", "visible")
             .style("left", cx + "px")
             .style("top", cy + "px")
-            .html(function(){
+            .html(function () {
 
-                if (d.details === ""){
+                var description = "Gender: " + d.gender + "</br>"
+                    + "Age: " + d.age + "</br>" 
+                    + "Location: " + d.location + "</br>"
+                    + "Case Type: " + d.caseType + " case</br>" +
+                    d.details;
+
+
+                if (d.details === "") {
                     return d.name
                 }
                 else {
-                    return d.details;
+                    return description;
                 }
             });
 
 
-        circle.attr("opacity",0.2);
-        link.attr("opacity",0.2);
+        circle.attr("opacity", 0.2);
+        link.attr("opacity", 0.2);
 
-        d3.select(this).attr("opacity",1);
+        d3.select(this).attr("opacity", 1);
 
-        var connected = link.filter(function(e) {
+        var connected = link.filter(function (e) {
             return e.source.id === d.id || e.target.id === d.id;
         });
-        connected.attr("opacity",1);
-        connected.each(function(e) {
-            circle.filter(function(f) {
+        connected.attr("opacity", 1);
+        connected.each(function (e) {
+            circle.filter(function (f) {
                 return f.id === e.source.id || f.id === e.target.id;
-            }).attr("opacity",1);
+            }).attr("opacity", 1);
         });
 
-    }).on("mouseout", function() {
-        tooltip.style("visibility","hidden");
-        circle.attr("opacity",1);
-        link.attr("opacity",1);
+    }).on("mouseout", function () {
+        tooltip.style("visibility", "hidden");
+        circle.attr("opacity", 1);
+        link.attr("opacity", 1);
 
     });
 
-    
+
     var legendWidth = width;
-    var legendHeight = height/10;
+    var legendHeight = height / 10;
     var legendSvg = d3.select(".legend").append("svg")
         .attr("width", legendWidth)
         .attr("height", legendHeight)
         .append("g")
         .attr("id", "legendGroup");
 
-    var legendData = data.filter(function(d){
+    var legendData = dataset.filter(function (d) {
         return d.infectionType === "";
     })
 
@@ -180,10 +202,10 @@ d3.csv("data/cases_in_NewEngland.csv", parseCSV).then(function(data) {
 
     legendText.append("text")
         .attr("class", "legendText")
-        .text(function(d){
+        .text(function (d) {
             return d.name;
         })
-        .attr("y", yGap+5);
+        .attr("y", yGap + 5);
 
     var textGroup = document.getElementsByClassName("legendText");
 
@@ -192,33 +214,13 @@ d3.csv("data/cases_in_NewEngland.csv", parseCSV).then(function(data) {
 
     legendCircle.append("circle")
         .attr("r", legendCircleRadius)
-        .attr("fill", function(d){
+        .attr("fill", function (d) {
             return colorScale(d.name)
         })
-        .attr("cx", function(d, i){
+        .attr("cx", function (d, i) {
 
-            if (i==0){
+            if (i == 0) {
                 return i * legendCircleRadius * 5 + xGap;
-            }
-            else {
-                var array = d3.range(0, i, 1);
-                var textWidthList = [];
-                for (var k = 0; k < array.length ; k++ ){
-                    var textWidth = textGroup[k].getBBox().width;
-                    textWidthList.push(textWidth);
-                }
-                textTotalWidth = textWidthList.reduce(function (acc, val) {
-                    return acc + val;
-                }, 0)
-                return (i * legendCircleRadius*5 + xGap) + textTotalWidth;
-            }
-        })
-        .attr("cy", yGap);
-
-        legendText.selectAll(".legendText").attr("x", function (d, i) {
-
-            if (i==0){
-                return i * legendCircleRadius * 5 + xGap + 15;
             }
             else {
                 var array = d3.range(0, i, 1);
@@ -229,15 +231,35 @@ d3.csv("data/cases_in_NewEngland.csv", parseCSV).then(function(data) {
                 }
                 textTotalWidth = textWidthList.reduce(function (acc, val) {
                     return acc + val;
-                }, 15)
+                }, 0)
                 return (i * legendCircleRadius * 5 + xGap) + textTotalWidth;
             }
         })
+        .attr("cy", yGap);
+
+    legendText.selectAll(".legendText").attr("x", function (d, i) {
+
+        if (i == 0) {
+            return i * legendCircleRadius * 5 + xGap + 15;
+        }
+        else {
+            var array = d3.range(0, i, 1);
+            var textWidthList = [];
+            for (var k = 0; k < array.length; k++) {
+                var textWidth = textGroup[k].getBBox().width;
+                textWidthList.push(textWidth);
+            }
+            textTotalWidth = textWidthList.reduce(function (acc, val) {
+                return acc + val;
+            }, 15)
+            return (i * legendCircleRadius * 5 + xGap) + textTotalWidth;
+        }
+    })
 
     var legendGroupObj = document.querySelector("#legendGroup")
     var lgdGroupObjWidth = legendGroupObj.getBBox().width;
-    legendSvg.attr("transform", `translate(${width/2 - lgdGroupObjWidth/2}, 0)`)
-    
+    legendSvg.attr("transform", `translate(${width / 2 - lgdGroupObjWidth / 2}, 0)`)
+
 });
 
 
@@ -252,6 +274,7 @@ function parseCSV(data) {
     d.location = data.location;
     d.gender = data.gender;
     d.age = data.age;
+    d.caseType = data.case_type;
     d.details = data.details;
     d.date = new Date(data.date);
 

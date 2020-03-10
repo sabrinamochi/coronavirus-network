@@ -1,15 +1,40 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <link rel="stylesheet" type="text/css" href="style/style.css">
-        <script src="lib/d3.js"></script>
-    </head>
-    <body>
+
+<head>
+    <link rel="stylesheet" type="text/css" href="style/style.css">
+    <script src="lib/d3.js"></script>
+</head>
+
+<body>
+    <header>
+        <h1>How COVID-19 Spreads in New England?</h1>
+    </header>
+    <main>
+        <div class="explain-text">
+            <p>
+                This chart shows how the confirmed and presumptive Coronavirus cases are related to each other.
+                </br>
+                Each circle represents one case. The lines represent connections between the cases.
+            </p>
+            <div class="list-container">
+                <ul>
+                    <li>B: Biogen</li>
+                    <li>C: Connecticut</li>
+                    <li>M: Massachusetts</li>
+                    <li>N: New Hampshire</li>
+                    <li>R: Rhode Island</li>
+                    <li>S: Saint Raphael Academy Trip to Europe</li>
+                    <li>V: Vermont</li>
+                </ul>
+            </div>
+        </div>
         <div id="container">
-            <h1>How did coronavirus spread in New England?</h1>
             <div class="legend"></div>
             <div id="chart"></div>
         </div>
-        <script src="script.js"></script>
-    </body>
+    </main>
+    <script src="script.js"></script>
+</body>
+
 </html>
