@@ -9,12 +9,12 @@ var svg = d3.select("#chart")
     .attr("viewBox", [0, 0, width, height]);
 
 // Chart
-var radius = 20;
+var radius = 15;
 var circlePadding = 2;
 var nodeG = svg.append("g").attr("class", "nodeG");
 var nodeParent = nodeG.selectAll(".circleGroup");
 var xCenter = [width / 4, width * 3 / 4];
-var yCenter = [0, height * 1 / 6, height * 3 / 6, height * 5 / 6];
+var yCenter = [0, height * 1 / 6, height * 2 / 6, height * 4 / 6];
 var forceX = d3.forceX()
             .x(function (d) { return xCenter[d.xCluster]; })
             .strength(0.25);
@@ -30,14 +30,19 @@ var forceCollide = d3.forceCollide()
                     .strength(0.7);
 
 var charge = d3.forceManyBody()
-                .strength(-120)
-                .distanceMin(2 * radius)              
+                .strength(-80)
+                .distanceMin(2 * radius);
+
+var center = d3.forceCenter()
+                .x(width / 2)
+                .y(height / 2)        
 
 
 var simulation = d3.forceSimulation()
     .velocityDecay(0.8)
     .force("charge", charge)
     .force("collide", forceCollide)
+    .force("center", center)
     .force("x", forceX)
     .force("y", forceY)
     .alphaTarget(0.8)
