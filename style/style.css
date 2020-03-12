@@ -12,8 +12,7 @@ main,
 .list-container,
 .legend,
 #container,
-#chart,
-.date-slider-container {
+#chart {
   display: grid;
   justify-content: center;
 }
@@ -42,8 +41,27 @@ h1 {
   padding: 0px;
 }
 
+.date-slider-container {
+    display: flex;
+    justify-content: center;
+}
+
 .date-slider{
   width: 20rem;
+  cursor: pointer;
+}
+
+#play-button {
+    width: 5em;
+    height: 2em;
+    background-color: white;
+    color: gray;
+    border: 2px solid rgba(0,0,0,0.5);
+    border-radius: 20px;
+    margin: 2em;
+    text-align: center;
+    box-shadow: 1px 1px rgba(0,0,0,0.5);
+    cursor: pointer;
 }
 
 #chart {
@@ -71,4 +89,9 @@ h1 {
 
 .nodeLabel {
   fill: rgb(255,255,255);
+}
+
+.nodeCircle {
+  opacity: 0.8;
+  /* mix-blend-mode: multiply; */
 }

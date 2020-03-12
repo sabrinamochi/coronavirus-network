@@ -1,15 +1,63 @@
-d3.csv("data/cases_in_NewEngland.csv", parseCSV).then(function (dataset) {
+// General settings
+// SVG
+var width = document.querySelector("#chart").clientWidth * 0.6;
+var height = document.querySelector("#chart").clientHeight;
+var svg = d3.select("#chart")
+    .append("svg")
+    .attr("width", width)
+    .attr("height", height);
 
-    var width = document.querySelector("#chart").clientWidth * 0.6;
-    var height = document.querySelector("#chart").clientHeight;
-    var svg = d3.select("#chart")
-        .append("svg")
-        .attr("width", width)
-        .attr("height", height);
-    var radius = 20;
-    var circlePadding = 15;
-   
-    var nodeG = svg.append("g").attr("class", "nodeG");
+// Chart
+var radius = 20;
+var circlePadding = 2;
+var nodeG = svg.append("g").attr("class", "nodeG");
+var nodeParent = nodeG.selectAll(".circleGroup");
+var xCenter = [width / 4, width * 3 / 4];
+var yCenter = [0, height * 1 / 6, height * 3 / 6, height * 5 / 6];
+var simulation = d3.forceSimulation()
+    .force("charge", d3.forceManyBody().strength())
+    .force("collide", d3.forceCollide().radius(radius + circlePadding))
+    .force("x", d3.forceX().x(function (d) {
+        return xCenter[d.xCluster];
+    }))
+    .force("y", d3.forceY().y(function (d) {
+        return yCenter[d.yCluster];
+    }))
+    .on("tick", ticked);
+var colorScale = d3.scaleOrdinal()
+    .domain(["Imported", "Saint Raphael Academy Trip to Europe", "Biogen", "Unknown"])
+    .range(["#A62639", "#E0CA3C", "#80a4ed", "#aba194"]);
+
+/* ADD A TOOLTIP TO THE NODES */
+var tooltip = d3.select("#chart")
+    .append("div")
+    .attr("class", "tooltip");
+
+// Legend
+var legendWidth = width;
+var legendHeight = height / 10;
+var legendSvg = d3.select(".legend").append("svg")
+    .attr("width", legendWidth)
+    .attr("height", legendHeight)
+    .append("g")
+    .attr("id", "legendGroup");
+
+// Slider
+var dateSlider = document.querySelector(".date-slider");
+var formatTime = d3.timeFormat("%m/%d/%Y");
+var dateOutput = document.querySelector(".date-text");
+var playButton = d3.select("#play-button").text("Play");
+var buttonClicked = 0;
+var moving = false;
+var currentValue, initialValue, targetValue, timeRange, dateToNumberScale;
+
+d3.csv("data/cases_in_NewEngland.csv").then(function (dataset) {
+
+    var initialData = dataset;
+    // initial state
+    drawPlot(processData(initialData), );
+    drawLegend(initialData);
+
 
     // Slider
     var sliderData = dataset.map(function (d) {
@@ -18,332 +66,297 @@ d3.csv("data/cases_in_NewEngland.csv", parseCSV).then(function (dataset) {
         }
     })
     sliderData = sliderData.filter(uniqueData);
+    sliderData.shift(); // Remove Feb 1 
 
-    function uniqueData(date, index, self) {
-        return self.indexOf(date) === index;
-    }
+    dateToNumberScale = d3.scaleOrdinal()
+        .domain(sliderData)
+        .range(d3.range(0, sliderData.length, 1));
 
-    var minDate = new Date(sliderData[0]).getTime();
-    var step_standard = 60 * 60 * 24 * 1000; // 1 day
-    var step_daylight = 60 * 60 * 25 * 1000;
-    var maxDate = new Date(sliderData[sliderData.length - 1]).getTime();
 
-    var dateSlider = document.querySelector(".date-slider");
-    dateSlider.step = step_standard;
+    // custom invert function
+    dateToNumberScale.invert = (function () {
+        var domain = dateToNumberScale.domain()
+        var range = dateToNumberScale.range()
+        var scale = d3.scaleOrdinal().domain(range).range(domain)
+
+        return function (x) {
+            return scale(x)
+        }
+    })();
+
+    var step = 1;
+
+    var minDate = dateToNumberScale(sliderData[0])
+    var maxDate = dateToNumberScale(sliderData[sliderData.length - 1]);
+
+    dateSlider.step = step;
     dateSlider.min = minDate;
-    dateSlider.max = maxDate + step_standard;
-    dateSlider.value = maxDate + step_standard;
+    dateSlider.max = maxDate;
+    dateSlider.value = maxDate;
 
-    var timeRange = (maxDate - minDate + step_standard) / step_standard;
-    timeRange = Math.round(timeRange)+1;
+    initialValue = d3.min(d3.range(0, sliderData.length, 1));
+    targetValue = d3.max(d3.range(0, sliderData.length, 1));
 
-    var dateToNumberScale = d3.scaleTime()
-        .domain([new Date(minDate), new Date(maxDate + step_daylight)])
-        .range([d3.min(d3.range(0, timeRange, 1)), d3.max(d3.range(0, timeRange, 1))]);
-
-    var formatTime = d3.timeFormat("%m/%d/%Y");
-    var dateOutput = document.querySelector(".date-text");
-    dateOutput.innerHTML = formatTime(new Date(+dateSlider.value));
+    currentValue = targetValue;
+    dateOutput.innerHTML = dateToNumberScale.invert(currentValue);
 
     dateSlider.oninput = function () {
+        buttonClicked++;
+        currentValue = +this.value;
+        updateData(currentValue, dataset);
+    }
 
-        var selectedDate = new Date(+this.value);
-        var selectedDateIndex = Math.round(+dateToNumberScale(selectedDate));
+    playButton.on("click", function () {
 
-        var filtered; 
-         for (var i = 0; i < selectedDateIndex+1; i++) {
+        var button = d3.select(this);
+        if (button.text() == "Pause") {
+            moving = false;
+            clearInterval(timer);
 
-            var newData = dataset.filter(function (d) {
-                var sel = formatTime(dateToNumberScale.invert(i));
-                return formatTime(new Date(d.date)) === sel;
-            })
+            button.text("Play");
+        } else {
+            moving = true;
+            timer = setInterval(sliderMove, 1000);
+            button.text("Pause");
+        }
+    })
 
-            if (i == 0) {
-             filtered = newData;
-             }
-
-             else {
-                 filtered = filtered.concat(newData);
-             }
-
-         }
-
-        update(filtered);
-        dateOutput.innerHTML = formatTime(selectedDate);
-
-     }
-
-     // Legend
-     var legendWidth = width;
-     var legendHeight = height / 10;
-     var legendSvg = d3.select(".legend").append("svg")
-         .attr("width", legendWidth)
-         .attr("height", legendHeight)
-         .append("g")
-         .attr("id", "legendGroup");
-
-    // initial state
-    update(dataset);
-
-    function update(updatedData) {
-
-        d3.selectAll("g.nodeG").selectAll("*").remove();
-
-        data = updatedData.filter(function (d) {
-            return d.infectionType !== "";
-        })
-
-        var nodesData = [];
-        data.forEach(function (d) {
-            var datum = {};
-            datum.id = d.id;
-            datum.infectedFrom = d.infectedFrom;
-            datum.infectionType = d.infectionType;
-            datum.infectionTypeNum = d.infectionTypeNum;
-            datum.name = d.name;
-            datum.status = d.status;
-            datum.resident = d.resident;
-            datum.location = d.location;
-            datum.gender = d.gender;
-            datum.age = d.age;
-            datum.caseType = d.caseType;
-            datum.details = d.details;
-            nodesData.push(datum);
-        });
-
-        var clusterNumData = data.map(function(d){
-            return d.infectionTypeNum;
-        })
-        clusterNumData = clusterNumData.filter(uniqueData);
-        var clusterNum = clusterNumData.length;
-
-         var colorScale = d3.scaleOrdinal()
-             .domain(["Imported", "Saint Raphael Academy Trip to Europe", "Biogen", "Unknown"])
-             .range(["#A62639", "#E0CA3C", "#80a4ed", "#aba194"]);
-
-        var clusters = new Array(clusterNum);
-
-        var nodes = nodesData.map(function (d) {
-            var i = +d.infectionTypeNum,
-                r = Math.sqrt((i + 1) / clusterNum * -Math.log(Math.random())) * radius,
-                d = {
-                    cluster: i,
-                    radius: r,
-                    x: Math.cos(i / clusterNum * 2 * Math.PI) * 200 + width / 2 + Math.random(),
-                    y: Math.sin(i / clusterNum * 2 * Math.PI) * 200 + height / 2 + Math.random(),
-                    name: d.name,
-                    type: d.infectionType,
-                    typeNum: d.infectionTypeNum,
-                    from: d.infectedFrom,
-                    status:d.status,
-                    resident:d.resident,
-                    location: d.location,
-                    gender: d.gender,
-                    age: d.age,
-                    caseType:d.caseType,
-                    details:d.details
-                };
-            if (!clusters[i] || (r > clusters[i].radius)) clusters[i] = d;
-            return d;
-        });
-
-        
-        /* INITIALIZE THE FORCE SIMULATION */
-        var simulation = d3.forceSimulation().nodes(nodes)
-            .force("center", d3.forceCenter(width / 2, height / 2))
-            .force("cluster", cluster().strength(5))
-            .force("collide", d3.forceCollide().radius(radius + circlePadding).strength(0.8))
-            .alpha(.5);
-
-        /* DRAW THE NODES */
-
-        var node = nodeG
-            .selectAll(".cricleGroup")
-            .data(nodes, function(d){
-                return d.name;
-            });
-
-        var nodeEnter = node.enter()
-            .append("g")
-            .attr("class", "circleGroup");
-
-        nodeEnter.append("circle")
-            .attr("class", "nodeCircle")
-            .attr("stroke", "#fff")
-            .attr("stroke-width", 1.5)
-            .attr("r", radius)
-            .attr("fill", function (d) {
-                return colorScale(d.type);
-            });
-
-        nodeEnter.append("text")
-            .attr("class", "nodeLabel")
-            .text(function (d) {
-                if (d.type !== "") {
-                    return d.name;
-                } else {
-                    return d.name.charAt(0);
-                }
-            })
-            .attr("text-anchor", "middle")
-            .attr("dy", 3)
-            .style("font-size", "12px")
-            .style("pointer-events", "none");
-
-        node = node.merge(nodeEnter);
-
-
-        /* TICK THE SIMULATION */
-        simulation.on("tick", function () {
-
-                node.attr("transform", function (d) {
-                            var dx = Math.max(radius, radius, Math.min(width - radius, d.x));
-                            var dy = Math.max(radius, Math.min(height - radius, d.y));
-                            return `translate(${dx}, ${dy})`})
-        });
-
-
-        // Move d to be adjacent to the cluster node.
-        // from: https://bl.ocks.org/mbostock/7881887
-        function cluster() {
-
-            var nodes,
-                strength = 0.1;
-
-            function force(alpha) {
-
-                // scale + curve alpha value
-                alpha *= strength * alpha;
-
-                nodes.forEach(function (d) {
-                    var cluster = clusters[d.cluster];
-                    if (cluster === d) return;
-
-                    let x = d.x - cluster.x,
-                        y = d.y - cluster.y,
-                        l = Math.sqrt(x * x + y * y),
-                        r = d.radius + cluster.radius;
-
-                    if (l != r) {
-                        l = (l - r) / l * alpha;
-                        d.x -= x *= l;
-                        d.y -= y *= l;
-                        cluster.x += x;
-                        cluster.y += y;
-                    }
-                });
-
-            }
-
-            force.initialize = function (_) {
-                nodes = _;
-            }
-
-            force.strength = _ => {
-                strength = _ == null ? strength : _;
-                return force;
-            };
-
-            return force;
-
+    function sliderMove() {
+        buttonClicked++;
+        if (buttonClicked == 1) {
+            currentValue = 0;
+        } else {
+            currentValue = currentValue + step;
         }
 
+        if (currentValue > targetValue - 1) {
+            moving = false;
+            clearInterval(timer);
+            playButton.text("Play");
+            buttonClicked = 0;
+        }
 
-        /* ADD A TOOLTIP TO THE NODES */
-        var tooltip = d3.select("#chart")
-            .append("div")
-            .attr("class", "tooltip");
+        dateSlider.value = currentValue;
+        updateData(currentValue, dataset);
 
-        node.selectAll(".nodeCircle").on("mouseover", function (d) {
-            var dx = Math.max(radius, radius, Math.min(width - radius, d.x));
-            var dy = Math.max(radius, Math.min(height - radius, d.y));
-            var cx = dx + 20;
-            var cy = dy + 10;
-
-
-            tooltip.style("visibility", "visible")
-                .style("left", cx + "px")
-                .style("top", cy + "px")
-                .html(function () {
-
-                    var description = 
-                        "Age: " + d.age + "</br>" +
-                        "Location: " + d.location + "</br>" +
-                        "Case Type: " + d.caseType + " case</br>" +
-                        d.details;
+    }
 
 
-                    if (d.details === "") {
-                        return d.name
-                    } else {
-                        return description;
-                    }
-                });
+});
 
 
-            node.selectAll(".nodeCircle").attr("opacity", 0.2);
+function uniqueData(date, index, self) {
+    return self.indexOf(date) === index;
+}
 
+function updateData(value, data) {
 
-            d3.select(this).attr("opacity", 1);
+    var filteredData;
+    for (var i = 0; i < value + 1; i++) {
 
-        }).on("mouseout", function () {
-            tooltip.style("visibility", "hidden");
-            node.selectAll(".nodeCircle").attr("opacity", 1);
-        });
-
-       
-        // Legend Update
-        var legendData = dataset.filter(function (d) {
-            return d.infectionType === "";
+        var newData = data.filter(function (d) {
+            var sel = dateToNumberScale.invert(i);
+            return d.date == sel;
         })
 
-        var legendCircleRadius = 10;
-        var xGap = 10;
-        var yGap = 20;
+        if (i == 0) {
+            filteredData = newData;
+        } else {
+            filteredData = filteredData.concat(newData);
+        }
+    }
+    var firstCaseData = data.filter(function (d) {
+        return d.date == "2/1/2020" && d.infection_type !== "";
+    })
 
-        var legendText = legendSvg.selectAll(".legendText")
-            .data(legendData).enter();
 
-        legendText.append("text")
-            .attr("class", "legendText")
-            .text(function (d) {
+    filteredData = filteredData.concat(firstCaseData);
+
+    drawPlot(processData(filteredData));
+    drawLegend(data)
+    dateOutput.innerHTML = dateToNumberScale.invert(value)
+
+}
+
+function processData(data) {
+    data = data.filter(function (d) {
+        return d.infection_type !== "";
+    })
+
+    // var nodesData = [];
+    data.forEach(function (d) {
+
+        d.index = +d.index;
+        d.location_num = +d.location_num;
+    });
+
+    var nodes = data.map(function (d) {
+        var xi;
+        var yi;
+        if (d.case_abbr == "N.H." || d.case_abbr == "MA" || d.case_abbr == "R.I.") {
+            xi = 1;
+        } else {
+            xi = 0;
+        }
+
+        if (d.case_abbr == "VT" || d.case_abbr == "N.H.") {
+            yi = 1;
+        } else if (d.case_abbr == "MA") {
+            yi = 2;
+        } else if (d.case_abbr == "R.I." || d.case_abbr == "CT") {
+            yi = 3;
+        }
+
+        var d = {
+            xCluster: xi,
+            yCluster: yi,
+            radius: radius,
+            id: d.index,
+            name: d.case_abbr,
+            type: d.infection_type,
+            location: d.location,
+            locationNum: d.location_num,
+            caseType: d.case_type,
+            details: d.details
+        };
+        return d;
+    });
+    return nodes;
+}
+
+
+function drawPlot(nodes) {
+
+    drawNodes(nodes);
+    /* INITIALIZE THE FORCE SIMULATION */
+    simulation.nodes(nodes);
+    simulation.alpha(1).restart();
+    // updateForce(nodes);
+}
+
+
+function ticked() {
+    d3.selectAll(".nodeCircle")
+        .attr("cx", d => Math.max(radius, radius, Math.min(width - radius, d.x)))
+        .attr("cy", d => Math.max(radius, Math.min(height - radius, d.y)));
+
+    d3.selectAll(".nodeLabel")
+        .attr("x", d => Math.max(radius, radius, Math.min(width - radius, d.x)))
+        .attr("y", d => Math.max(radius, Math.min(height - radius, d.y)));
+
+}
+
+// function updateForce(data){
+//     simulation.alpha(1).restart();     
+//     simulation.force("y").initialize(data);
+//     simulation.force("x").initialize(data);
+
+// }
+
+function drawNodes(data) {
+    /* DRAW THE NODES */
+    nodeParent = nodeParent
+        .data(data, function (d) {
+            return d.id;
+        });
+
+    nodeParent.exit().remove();
+
+    var nodeParentEnter = nodeParent.enter()
+        .append("g")
+        .attr("class", "circleGroup");
+
+    nodeParentEnter.append("circle")
+        .attr("class", "nodeCircle")
+        .attr("stroke", "#fff")
+        .attr("stroke-width", 1.5)
+        .attr("r", radius)
+        .attr("cx", d => d.x)
+        .attr("cy", d => d.y)
+        .attr("fill", function (d) {
+            return colorScale(d.type);
+        });
+
+    nodeParentEnter.append("text")
+        .attr("class", "nodeLabel")
+        .text(function (d) {
+            if (d.type !== "") {
                 return d.name;
-            })
-            .attr("y", yGap + 5);
+            } else {
+                return d.name.charAt(0);
+            }
+        })
+        .attr("text-anchor", "middle")
+        .attr("cx", d => d.x)
+        .attr("cy", d => d.y)
+        .attr("dy", 3)
+        .style("font-size", "12px")
+        .style("pointer-events", "none");
 
-        var textGroup = document.getElementsByClassName("legendText");
+    nodeParent = nodeParentEnter.merge(nodeParent);
 
-        var legendCircle = legendSvg.selectAll("circle")
-            .data(legendData).enter();
+    d3.selectAll(".nodeCircle").on("mouseover", function (d) {
+        var cx = d.x + 20;
+        var cy = d.y + 10;
+        tooltip.style("visibility", "visible")
+            .style("left", cx + "px")
+            .style("top", cy + "px")
+            .html(function () {
 
-        legendCircle.append("circle")
-            .attr("r", legendCircleRadius)
-            .attr("fill", function (d) {
-                return colorScale(d.name)
-            })
-            .attr("cx", function (d, i) {
+                var description =
+                    "Location: " + d.location + "</br>" +
+                    "Case Type: " + d.caseType + " case</br>" +
+                    d.details;
 
-                if (i == 0) {
-                    return i * legendCircleRadius * 5 + xGap;
-                } else {
-                    var array = d3.range(0, i, 1);
-                    var textWidthList = [];
-                    for (var k = 0; k < array.length; k++) {
-                        var textWidth = textGroup[k].getBBox().width;
-                        textWidthList.push(textWidth);
-                    }
-                    textTotalWidth = textWidthList.reduce(function (acc, val) {
-                        return acc + val;
-                    }, 0)
-                    return (i * legendCircleRadius * 5 + xGap) + textTotalWidth;
-                }
-            })
-            .attr("cy", yGap);
+                return description;
 
-        legendText.selectAll(".legendText").attr("x", function (d, i) {
+            });
+
+
+        d3.selectAll(".nodeCircle").attr("opacity", 0.2);
+
+        d3.select(this).attr("opacity", 1);
+
+    }).on("mouseout", function () {
+        tooltip.style("visibility", "hidden");
+        d3.selectAll(".nodeCircle").attr("opacity", 1);
+    });
+}
+
+function drawLegend(dataset) {
+    // Legend Update
+    var legendData = dataset.filter(function (d) {
+        return d.infection_type === "" && d.case_abbr !== "";
+    })
+
+    var legendCircleRadius = 10;
+    var xGap = 10;
+    var yGap = 20;
+
+    var legendText = legendSvg.selectAll(".legendText")
+        .data(legendData).enter();
+
+    legendText.append("text")
+        .attr("class", "legendText")
+        .text(function (d) {
+            return d.case_abbr;
+        })
+        .attr("y", yGap + 5);
+
+    var textGroup = document.getElementsByClassName("legendText");
+
+    var legendCircle = legendSvg.selectAll("circle")
+        .data(legendData).enter();
+
+    legendCircle.append("circle")
+        .attr("r", legendCircleRadius)
+        .attr("fill", function (d) {
+            return colorScale(d.case_abbr)
+        })
+        .attr("cx", function (d, i) {
 
             if (i == 0) {
-                return i * legendCircleRadius * 5 + xGap + 15;
+                return i * legendCircleRadius * 5 + xGap;
             } else {
                 var array = d3.range(0, i, 1);
                 var textWidthList = [];
@@ -353,34 +366,31 @@ d3.csv("data/cases_in_NewEngland.csv", parseCSV).then(function (dataset) {
                 }
                 textTotalWidth = textWidthList.reduce(function (acc, val) {
                     return acc + val;
-                }, 15)
+                }, 0)
                 return (i * legendCircleRadius * 5 + xGap) + textTotalWidth;
             }
         })
+        .attr("cy", yGap);
 
-        var legendGroupObj = document.querySelector("#legendGroup")
-        var lgdGroupObjWidth = legendGroupObj.getBBox().width;
-        legendSvg.attr("transform", `translate(${width / 2 - lgdGroupObjWidth / 2}, 0)`)
-    }
-    
-});
+    legendText.selectAll(".legendText").attr("x", function (d, i) {
 
+        if (i == 0) {
+            return i * legendCircleRadius * 5 + xGap + 15;
+        } else {
+            var array = d3.range(0, i, 1);
+            var textWidthList = [];
+            for (var k = 0; k < array.length; k++) {
+                var textWidth = textGroup[k].getBBox().width;
+                textWidthList.push(textWidth);
+            }
+            textTotalWidth = textWidthList.reduce(function (acc, val) {
+                return acc + val;
+            }, 15)
+            return (i * legendCircleRadius * 5 + xGap) + textTotalWidth;
+        }
+    })
 
-function parseCSV(data) {
-    var d = {};
-    d.name = data.case_num;
-    d.id = +data.index;
-    d.infectedFrom = data.infected_from;
-    d.infectionType = data.infection_type;
-    d.infectionTypeNum = +data.infection_type_number;
-    d.status = data.status;
-    d.resident = data.residency;
-    d.location = data.location;
-    d.gender = data.gender;
-    d.age = data.age;
-    d.caseType = data.case_type;
-    d.details = data.details;
-    d.date = data.date;
-
-    return d;
+    var legendGroupObj = document.querySelector("#legendGroup")
+    var lgdGroupObjWidth = legendGroupObj.getBBox().width;
+    legendSvg.attr("transform", `translate(${width / 2 - lgdGroupObjWidth / 2}, 0)`)
 }
