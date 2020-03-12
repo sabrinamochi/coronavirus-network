@@ -1,3 +1,6 @@
+/*eslint-disable*/
+import { csv } from 'd3-request';
+
 // General settings
 // SVG
 var width = document.querySelector("#chart").clientWidth * 0.6;
@@ -13,7 +16,7 @@ var radius = 15;
 var circlePadding = 2;
 var nodeG = svg.append("g").attr("class", "nodeG");
 var nodeParent = nodeG.selectAll(".circleGroup");
-var xCenter = [width / 4, width * 3 / 4];
+var xCenter = [width / 3, width * 2 / 3];
 var yCenter = [0, height * 1 / 6, height * 2 / 6, height * 0.5];
 var forceX = d3.forceX()
             .x(function (d) { return xCenter[d.xCluster]; })
@@ -35,7 +38,7 @@ var charge = d3.forceManyBody()
 
 var center = d3.forceCenter()
                 .x(width / 2)
-                .y(height / 2)        
+                .y(height / 2)
 
 
 var simulation = d3.forceSimulation()
@@ -55,7 +58,7 @@ var colorScale = d3.scaleOrdinal()
 /* ADD A TOOLTIP TO THE NODES */
 var tooltip = d3.select("#chart")
     .append("div")
-    .attr("class", "tooltip");
+    .attr("class", "tooltip benton-regular");
 
 // Legend
 var legendWidth = width;
@@ -75,11 +78,11 @@ var buttonClicked = 0;
 var moving = false;
 var currentValue, initialValue, targetValue, timeRange, dateToNumberScale;
 
-d3.csv("data/cases_in_NewEngland.csv", function (err, dataset) {
+csv("assets/cases_in_NewEngland.csv", function (err, dataset) {
     if (err) { throw err; }
 
     var initialData = dataset;
-    
+
     initialData.forEach(function(d){
         d.infection_type.replace('Imported', 'Other source');
     });
@@ -94,7 +97,7 @@ d3.csv("data/cases_in_NewEngland.csv", function (err, dataset) {
     //     }
     // });
     // sliderData = sliderData.filter(uniqueData);
-    // sliderData.shift(); // Remove Feb 1 
+    // sliderData.shift(); // Remove Feb 1
 
     // dateToNumberScale = d3.scaleOrdinal()
     //     .domain(sliderData)
@@ -277,7 +280,7 @@ function ticked() {
 }
 
 // function updateForce(data){
-//     simulation.alpha(1).restart();     
+//     simulation.alpha(1).restart();
 //     simulation.force("y").initialize(data);
 //     simulation.force("x").initialize(data);
 
@@ -308,7 +311,7 @@ function drawNodes(data) {
         });
 
     nodeParentEnter.append("text")
-        .attr("class", "nodeLabel")
+        .attr("class", "nodeLabel benton-regular")
         .text(function (d) {
             if (d.type !== "") {
                 return d.name;
@@ -330,7 +333,7 @@ function drawNodes(data) {
         var mouseCoords = d3.mouse(this);
         var cx = mouseCoords[0] + 20;
         var cy = mouseCoords[1] - 120;
-        
+
         tooltip.style("visibility", "visible")
             .html(function () {
                 var description =

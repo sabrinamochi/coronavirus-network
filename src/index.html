@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang='en'>
+
+  <head>
+    <meta charset='utf-8'>
+    <title>Updating map of coronavirus cases in the US - The Boston Globe</title>
+    <meta name='viewport' content='width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no'>
+    <meta charset='utf-8'>
+    <meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
+    <meta http-equiv='Cache-Control' content='no-cache, no-store, must-revalidate' />
+    <meta http-equiv='Pragma' content='no-cache' />
+    <meta http-equiv='Expires' content='0' />
+
+    <script type='text/javascript'>
+      // https://github.com/filamentgroup/loadJS
+      !function(e){var t=function(t,n){"use strict";var o=e.document.getElementsByTagName("script")[0],r=e.document.createElement("script");return r.src=t,r.async=!0,o.parentNode.insertBefore(r,o),n&&"function"==typeof n&&(r.onload=n),r};"undefined"!=typeof module?module.exports=t:e.loadJS=t}("undefined"!=typeof global?global:this);
+    </script>
+
+     <style>
+      *{-moz-box-sizing:border-box;box-sizing:border-box}a,abbr,acronym,address,applet,article,aside,audio,b,big,blockquote,body,canvas,caption,center,cite,code,dd,del,details,dfn,div,dl,dt,em,embed,fieldset,figcaption,figure,footer,form,h1,h2,h3,h4,h5,h6,header,hgroup,html,i,iframe,img,ins,kbd,label,legend,li,mark,menu,nav,object,ol,output,p,pre,q,ruby,s,samp,section,small,span,strike,strong,sub,summary,sup,table,tbody,td,tfoot,th,thead,time,tr,tt,u,ul,var,video{margin:0;padding:0;border:0;font:inherit;vertical-align:baseline}article,aside,details,figcaption,figure,footer,header,hgroup,menu,nav,section{display:block}a img{border:none}blockquote{quotes:none}blockquote:after,blockquote:before{content:'';content:none}table{border-collapse:collapse;border-spacing:0}caption,td,th{text-align:left;font-weight:400;vertical-align:middle}body{font-family:Georgia,Times New Roman,Times,serif;line-height:1.6}a{transition:color .1s;color:#005DC7;text-decoration:none}a:active,a:focus,a:hover{color:#334f5b;text-decoration:none}
+    </style>
+
+
+    <script src='https://api.mapbox.com/mapbox-gl-js/v1.8.1/mapbox-gl.js'></script>
+    <link href='https://api.mapbox.com/mapbox-gl-js/v1.8.1/mapbox-gl.css' rel='stylesheet' />
+
+    <!-- UPDATE VERSION # IF YOU NEED TO REPUBLISH -->
+    <link rel='stylesheet' href='main.css?version=2.1' />
+  </head>
+
+  <body>
+
+    <main>
+        <div class="graphic__text">
+          <h1 class="graphic__text--hed benton-bold">How coronavirus spread in New England</h1>
+          <!-- <h3 class="graphic__text--subhed benton-regular">This chart shows how the confirmed and presumptive coronavirus cases are related to each other.</h3> -->
+        </div>
+
+        <div id="container">
+          <div class="graphic__legend">
+            <span class="legend-box legend-box-1"></span>
+            <span class="legend-text benton-regular">Biogen</span>
+            <span class="legend-box legend-box-2"></span>
+            <span class="legend-text benton-regular">St. Raphael Academy trip to Europe</span>
+            <span class="legend-box legend-box-3"></span>
+            <span class="legend-text benton-regular">Other source</span>
+            <span class="legend-box legend-box-4"></span>
+            <span class="legend-text benton-regular">Unknown</span>
+          </div>
+
+
+          <div class="legend"></div>
+          <!-- <div class="date-slider-container">
+              <div id="play-button"></div>
+              <input type = "range" class="date-slider">
+          </div>
+          <div class="date-text-container">
+              <p>Date : <span class="date-text"></span></p>
+          </div> -->
+          <div id="chart"></div>
+        </div>
+    </main>
+
+    <div class='source-and-credit bentonsanscond-regular'>
+      <p class="last-update"></p>
+      <p class='source'><span>Source: Johns Hopkins University, WHO, CDC</span></p>
+      <p class='credit'><span>Szu Yu Chen/Globe Correspondent and Saurabh Datar/Globe Staff</span></p>
+    </div>
+
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/d3/5.12.0/d3.min.js"></script>
+
+    <!-- (begin) globe iframe embed -->
+    <script src='https://apps.bostonglobe.com/common/js/pym/pym-1.3.2.min.js'></script>
+    <script>
+      // version
+      if (window.console && console.log) console.log('-- globe iframe graphic v2.0.3 --');
+      (function() {
+        var d = new Date();
+        var timestamp = d.getTime();
+        var js = 'main.js?v=' + timestamp;
+        loadJS(js, function() {
+          window.pymChild = pym.Child({ renderCallback: window.onResize, polling: true });
+          pymChild.onMessage('enter-view', window.enterView);
+          pymChild.sendMessage('ready', true);
+        });
+      })();
+    </script>
+    <!-- (end) globe iframe embed -->
+  </body>
+
+</html>
