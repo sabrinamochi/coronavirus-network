@@ -105,8 +105,8 @@ main,
 }
 
 p {
-    font-size: 18px;
-    text-align: center;
+  font-size: 18px;
+  text-align: center;
 }
 
 h1 {
@@ -166,16 +166,13 @@ h1 {
   padding: .5em 1em;
   line-height: 1.5em;
   pointer-events: none;
-  max-width: 25%;
+  max-width: 300px;
   color: $black-hed;
   background: #fff;
   text-align left
-}
+  +mq(bp-2)
+    max-width 400px
 
-@media screen and (max-width: 500px) {
-  .tooltip {
-    max-width: 300px;
-  }
 }
 
 .legend-box {

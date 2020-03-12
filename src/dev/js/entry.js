@@ -58,7 +58,7 @@ var colorScale = d3.scaleOrdinal()
 /* ADD A TOOLTIP TO THE NODES */
 var tooltip = d3.select("#chart")
     .append("div")
-    .attr("class", "tooltip benton-regular");
+    .attr("class", "tooltip bentonsanscond-regular");
 
 // Legend
 var legendWidth = width;
@@ -311,7 +311,7 @@ function drawNodes(data) {
         });
 
     nodeParentEnter.append("text")
-        .attr("class", "nodeLabel benton-regular")
+        .attr("class", "nodeLabel bentonsanscond-regular")
         .text(function (d) {
             if (d.type !== "") {
                 return d.name;
