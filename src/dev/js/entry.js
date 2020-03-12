@@ -334,13 +334,16 @@ function drawNodes(data) {
         var cx = mouseCoords[0] + 20;
         var cy = mouseCoords[1] - 120;
 
+        const details = d.details.length ? `Details: ${d.details}` : '';
+
+        const description = `
+          Location: ${d.location}<br>
+          Case type: ${d.caseType.charAt(0).toUpperCase() + d.caseType.slice(1)}<br>
+          ${details}
+        `;
+
         tooltip.style("visibility", "visible")
-            .html(function () {
-                var description =
-                    "Location: " + d.location + "</br>" +
-                    "Case Type: " + d.caseType.charAt(0).toUpperCase() + d.caseType.slice(1) +"</br>" + d.details;
-                return description;
-            })
+            .html(description)
             .style("left", cx + "px")
             .style("top", mouseCoords[1] - tooltip.node().getBoundingClientRect().height - 20 + "px")
 
