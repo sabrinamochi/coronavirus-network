@@ -75,7 +75,9 @@ var buttonClicked = 0;
 var moving = false;
 var currentValue, initialValue, targetValue, timeRange, dateToNumberScale;
 
-d3.csv("data/cases_in_NewEngland.csv").then(function (dataset) {
+d3.csv("data/cases_in_NewEngland.csv", function (err, dataset) {
+    if (err) { throw err; }
+
     var initialData = dataset;
     
     initialData.forEach(function(d){

@@ -13,8 +13,8 @@ main,
 .legend,
 #container,
 #chart {
-  display: grid;
-  justify-content: center;
+  display: block;
+  text-align: center;
 }
 
 p {
