@@ -128,8 +128,8 @@ h1 {
 }
 
 .date-slider-container {
-    display: flex;
-    justify-content: center;
+  display: flex;
+  justify-content: center;
 }
 
 .date-slider{
@@ -137,18 +137,26 @@ h1 {
   cursor: pointer;
 }
 
-#play-button {
-    width: 5em;
-    height: 2em;
-    background-color: white;
-    color: gray;
-    border: 2px solid rgba(0,0,0,0.5);
-    border-radius: 20px;
-    margin: 2em;
-    text-align: center;
-    box-shadow: 1px 1px rgba(0,0,0,0.5);
-    cursor: pointer;
-}
+.btn
+  display: inline-block;
+  text-align: center;
+  overflow: visible;
+  vertical-align: top;
+  font-size: 100%;
+  text-decoration: none;
+  border-radius: 3px;
+  font-style: normal;
+  font-weight: 700;
+  transition: all .1s ease;
+  margin 0.25rem 1rem
+  cursor pointer
+  border-radius 15px
+  text-align left
+  margin 10px 10px 0px 0px
+  padding 6px 12px
+  letter-spacing 1px
+  &:hover
+    background darken($beige, 10)
 
 #chart {
   width: 100vw;
@@ -157,7 +165,7 @@ h1 {
 
 }
 
-.tooltip {
+.tooltip
   position: absolute;
   left: 0px;
   top: 0px;
@@ -172,8 +180,6 @@ h1 {
   text-align left
   +mq(bp-2)
     max-width 400px
-
-}
 
 .legend-box {
   width: 20px;
