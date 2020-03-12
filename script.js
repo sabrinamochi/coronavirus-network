@@ -81,7 +81,7 @@ d3.csv("data/cases_in_NewEngland.csv", function (err, dataset) {
     var initialData = dataset;
     
     initialData.forEach(function(d){
-        d.case_abbr.replace('Imported', 'Other source')
+        d.infection_type.replace('Imported', 'Other source');
     });
     // initial state
     drawPlot(processData(initialData));
@@ -89,86 +89,86 @@ d3.csv("data/cases_in_NewEngland.csv", function (err, dataset) {
 
 
     // Slider
-    var sliderData = dataset.map(function (d) {
-        if (d.date !== "") {
-            return d.date;
-        }
-    });
-    sliderData = sliderData.filter(uniqueData);
-    sliderData.shift(); // Remove Feb 1 
+    // var sliderData = dataset.map(function (d) {
+    //     if (d.date !== "") {
+    //         return d.date;
+    //     }
+    // });
+    // sliderData = sliderData.filter(uniqueData);
+    // sliderData.shift(); // Remove Feb 1 
 
-    dateToNumberScale = d3.scaleOrdinal()
-        .domain(sliderData)
-        .range(d3.range(0, sliderData.length, 1));
+    // dateToNumberScale = d3.scaleOrdinal()
+    //     .domain(sliderData)
+    //     .range(d3.range(0, sliderData.length, 1));
 
 
-    // custom invert function
-    dateToNumberScale.invert = (function () {
-        var domain = dateToNumberScale.domain()
-        var range = dateToNumberScale.range()
-        var scale = d3.scaleOrdinal()
-        .domain(range)
-        .range(domain);
+    // // custom invert function
+    // dateToNumberScale.invert = (function () {
+    //     var domain = dateToNumberScale.domain()
+    //     var range = dateToNumberScale.range()
+    //     var scale = d3.scaleOrdinal()
+    //     .domain(range)
+    //     .range(domain);
 
-        return function (x) {
-            return scale(x)
-        }
-    })();
+    //     return function (x) {
+    //         return scale(x)
+    //     }
+    // })();
 
-    var step = 1;
+    // var step = 1;
 
-    var minDate = dateToNumberScale(sliderData[0]);
-    var maxDate = dateToNumberScale(sliderData[sliderData.length - 1]);
+    // var minDate = dateToNumberScale(sliderData[0]);
+    // var maxDate = dateToNumberScale(sliderData[sliderData.length - 1]);
 
-    dateSlider.step = step;
-    dateSlider.min = minDate;
-    dateSlider.max = maxDate;
-    dateSlider.value = maxDate;
+    // dateSlider.step = step;
+    // dateSlider.min = minDate;
+    // dateSlider.max = maxDate;
+    // dateSlider.value = maxDate;
 
-    initialValue = d3.min(d3.range(0, sliderData.length, 1));
-    targetValue = d3.max(d3.range(0, sliderData.length, 1));
+    // initialValue = d3.min(d3.range(0, sliderData.length, 1));
+    // targetValue = d3.max(d3.range(0, sliderData.length, 1));
 
-    currentValue = targetValue;
-    dateOutput.innerHTML = dateToNumberScale.invert(currentValue);
+    // currentValue = targetValue;
+    // dateOutput.innerHTML = dateToNumberScale.invert(currentValue);
 
-    dateSlider.oninput = function () {
-        buttonClicked++;
-        currentValue = +this.value;
-        updateData(currentValue, dataset);
-    }
+    // dateSlider.oninput = function () {
+    //     buttonClicked++;
+    //     currentValue = +this.value;
+    //     updateData(currentValue, dataset);
+    // }
 
-    playButton.on("click", function () {
-        var button = d3.select(this);
-        if (button.text() == "Pause") {
-            moving = false;
-            clearInterval(timer);
+    // playButton.on("click", function () {
+    //     var button = d3.select(this);
+    //     if (button.text() == "Pause") {
+    //         moving = false;
+    //         clearInterval(timer);
 
-            button.text("Play");
-        } else {
-            moving = true;
-            timer = setInterval(sliderMove, 1000);
-            button.text("Pause");
-        }
-    })
+    //         button.text("Play");
+    //     } else {
+    //         moving = true;
+    //         timer = setInterval(sliderMove, 1000);
+    //         button.text("Pause");
+    //     }
+    // })
 
-    function sliderMove() {
-        buttonClicked++;
-        if (buttonClicked == 1) {
-            currentValue = 0;
-        } else {
-            currentValue = currentValue + step;
-        }
+    // function sliderMove() {
+    //     buttonClicked++;
+    //     if (buttonClicked == 1) {
+    //         currentValue = 0;
+    //     } else {
+    //         currentValue = currentValue + step;
+    //     }
 
-        if (currentValue > targetValue - 1) {
-            moving = false;
-            clearInterval(timer);
-            playButton.text("Play");
-            buttonClicked = 0;
-        }
+    //     if (currentValue > targetValue - 1) {
+    //         moving = false;
+    //         clearInterval(timer);
+    //         playButton.text("Play");
+    //         buttonClicked = 0;
+    //     }
 
-        dateSlider.value = currentValue;
-        updateData(currentValue, dataset);
-    }
+    //     dateSlider.value = currentValue;
+    //     updateData(currentValue, dataset);
+    // }
 });
 
 
@@ -177,7 +177,6 @@ function uniqueData(date, index, self) {
 }
 
 function updateData(value, data) {
-    console.log('updateData', data);
     var filteredData;
     for (var i = 0; i < value + 1; i++) {
 
@@ -262,12 +261,20 @@ function drawPlot(nodes) {
 
 function ticked() {
     d3.selectAll(".nodeCircle")
-        .attr("cx", d => Math.max(radius, radius, Math.min(width - radius, d.x)))
-        .attr("cy", d => Math.max(radius, Math.min(height - radius, d.y)));
+        .attr("cx", function (d) {
+            return Math.max(radius, radius, Math.min(width - radius, d.x));
+        })
+        .attr("cy", function(d) {
+            return Math.max(radius, Math.min(height - radius, d.y));
+        })
 
     d3.selectAll(".nodeLabel")
-        .attr("x", d => Math.max(radius, radius, Math.min(width - radius, d.x)))
-        .attr("y", d => Math.max(radius, Math.min(height - radius, d.y)));
+        .attr("x", function (d) {
+            return Math.max(radius, radius, Math.min(width - radius, d.x));
+        })
+        .attr("y", function(d) {
+            return Math.max(radius, Math.min(height - radius, d.y));
+        })
 
 }
 
@@ -325,16 +332,16 @@ function drawNodes(data) {
         var mouseCoords = d3.mouse(this);
         var cx = mouseCoords[0] + 20;
         var cy = mouseCoords[1] - 120;
+        
         tooltip.style("visibility", "visible")
-            .style("left", cx + "px")
-            .style("top", cy + "px")
             .html(function () {
                 var description =
                     "Location: " + d.location + "</br>" +
-                    "Case Type: " + d.caseType + " case</br>" +
-                    d.details;
+                    "Case Type: " + d.caseType.charAt(0).toUpperCase() + d.caseType.slice(1) +"</br>" + d.details;
                 return description;
-            });
+            })
+            .style("left", cx + "px")
+            .style("top", mouseCoords[1] - tooltip.node().getBoundingClientRect().height - 20 + "px")
 
 
         d3.selectAll(".nodeCircle").attr("opacity", 0.2);
@@ -354,7 +361,10 @@ function drawLegend(dataset) {
     // Legend Update
     var legendData = dataset.filter(function (d) {
         return d.infection_type === "" && d.case_abbr !== "";
-    })
+    });
+    legendData.forEach(function(leg) {
+        leg.case_abbr = leg.case_abbr.replace('Imported', 'Other source');
+    });
 
     var legendCircleRadius = 10;
     var xGap = 10;
