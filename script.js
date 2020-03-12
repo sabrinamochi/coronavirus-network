@@ -5,7 +5,8 @@ var height = document.querySelector("#chart").clientHeight;
 var svg = d3.select("#chart")
     .append("svg")
     .attr("width", width)
-    .attr("height", height);
+    .attr("height", height)
+    .attr("viewBox", [0, 0, width, height]);
 
 // Chart
 var radius = 20;
@@ -14,18 +15,36 @@ var nodeG = svg.append("g").attr("class", "nodeG");
 var nodeParent = nodeG.selectAll(".circleGroup");
 var xCenter = [width / 4, width * 3 / 4];
 var yCenter = [0, height * 1 / 6, height * 3 / 6, height * 5 / 6];
+var forceX = d3.forceX()
+            .x(function (d) { return xCenter[d.xCluster]; })
+            .strength(0.25);
+
+var forceY = d3.forceY()
+                .y(function (d) {
+                    return yCenter[d.yCluster];
+                })
+                .strength(0.25);
+
+var forceCollide = d3.forceCollide()
+                    .radius(radius + circlePadding)
+                    .strength(0.7);
+
+var charge = d3.forceManyBody()
+                .strength(-120)
+                .distanceMin(2 * radius)              
+
+
 var simulation = d3.forceSimulation()
-    .force("charge", d3.forceManyBody().strength())
-    .force("collide", d3.forceCollide().radius(radius + circlePadding))
-    .force("x", d3.forceX().x(function (d) {
-        return xCenter[d.xCluster];
-    }))
-    .force("y", d3.forceY().y(function (d) {
-        return yCenter[d.yCluster];
-    }))
+    .velocityDecay(0.8)
+    .force("charge", charge)
+    .force("collide", forceCollide)
+    .force("x", forceX)
+    .force("y", forceY)
+    .alphaTarget(0.8)
     .on("tick", ticked);
+
 var colorScale = d3.scaleOrdinal()
-    .domain(["Imported", "Saint Raphael Academy Trip to Europe", "Biogen", "Unknown"])
+    .domain(["Other source", "Saint Raphael Academy Trip to Europe", "Biogen", "Unknown"])
     .range(["#A62639", "#E0CA3C", "#80a4ed", "#aba194"]);
 
 /* ADD A TOOLTIP TO THE NODES */
@@ -52,10 +71,13 @@ var moving = false;
 var currentValue, initialValue, targetValue, timeRange, dateToNumberScale;
 
 d3.csv("data/cases_in_NewEngland.csv").then(function (dataset) {
-
     var initialData = dataset;
+    
+    initialData.forEach(function(d){
+        d.case_abbr.replace('Imported', 'Other source')
+    });
     // initial state
-    drawPlot(processData(initialData), );
+    drawPlot(processData(initialData));
     drawLegend(initialData);
 
 
@@ -64,7 +86,7 @@ d3.csv("data/cases_in_NewEngland.csv").then(function (dataset) {
         if (d.date !== "") {
             return d.date;
         }
-    })
+    });
     sliderData = sliderData.filter(uniqueData);
     sliderData.shift(); // Remove Feb 1 
 
@@ -77,7 +99,9 @@ d3.csv("data/cases_in_NewEngland.csv").then(function (dataset) {
     dateToNumberScale.invert = (function () {
         var domain = dateToNumberScale.domain()
         var range = dateToNumberScale.range()
-        var scale = d3.scaleOrdinal().domain(range).range(domain)
+        var scale = d3.scaleOrdinal()
+        .domain(range)
+        .range(domain);
 
         return function (x) {
             return scale(x)
@@ -86,7 +110,7 @@ d3.csv("data/cases_in_NewEngland.csv").then(function (dataset) {
 
     var step = 1;
 
-    var minDate = dateToNumberScale(sliderData[0])
+    var minDate = dateToNumberScale(sliderData[0]);
     var maxDate = dateToNumberScale(sliderData[sliderData.length - 1]);
 
     dateSlider.step = step;
@@ -107,7 +131,6 @@ d3.csv("data/cases_in_NewEngland.csv").then(function (dataset) {
     }
 
     playButton.on("click", function () {
-
         var button = d3.select(this);
         if (button.text() == "Pause") {
             moving = false;
@@ -138,10 +161,7 @@ d3.csv("data/cases_in_NewEngland.csv").then(function (dataset) {
 
         dateSlider.value = currentValue;
         updateData(currentValue, dataset);
-
     }
-
-
 });
 
 
@@ -150,16 +170,16 @@ function uniqueData(date, index, self) {
 }
 
 function updateData(value, data) {
-
+    console.log('updateData', data);
     var filteredData;
     for (var i = 0; i < value + 1; i++) {
 
         var newData = data.filter(function (d) {
             var sel = dateToNumberScale.invert(i);
-            return d.date == sel;
+            return d.date === sel;
         })
 
-        if (i == 0) {
+        if (i === 0) {
             filteredData = newData;
         } else {
             filteredData = filteredData.concat(newData);
@@ -185,7 +205,6 @@ function processData(data) {
 
     // var nodesData = [];
     data.forEach(function (d) {
-
         d.index = +d.index;
         d.location_num = +d.location_num;
     });
@@ -226,7 +245,6 @@ function processData(data) {
 
 
 function drawPlot(nodes) {
-
     drawNodes(nodes);
     /* INITIALIZE THE FORCE SIMULATION */
     simulation.nodes(nodes);
@@ -295,31 +313,33 @@ function drawNodes(data) {
 
     nodeParent = nodeParentEnter.merge(nodeParent);
 
-    d3.selectAll(".nodeCircle").on("mouseover", function (d) {
-        var cx = d.x + 20;
-        var cy = d.y + 10;
+    d3.selectAll(".nodeCircle")
+    .on("mouseover", function (d) {
+        var mouseCoords = d3.mouse(this);
+        var cx = mouseCoords[0] + 20;
+        var cy = mouseCoords[1] - 120;
         tooltip.style("visibility", "visible")
             .style("left", cx + "px")
             .style("top", cy + "px")
             .html(function () {
-
                 var description =
                     "Location: " + d.location + "</br>" +
                     "Case Type: " + d.caseType + " case</br>" +
                     d.details;
-
                 return description;
-
             });
 
 
         d3.selectAll(".nodeCircle").attr("opacity", 0.2);
-
-        d3.select(this).attr("opacity", 1);
+        d3.select(this)
+        .attr("opacity", 1)
+        .classed('highlight', true);
 
     }).on("mouseout", function () {
         tooltip.style("visibility", "hidden");
-        d3.selectAll(".nodeCircle").attr("opacity", 1);
+        d3.selectAll(".nodeCircle")
+            .attr("opacity", 1)
+            .classed('highlight', false);
     });
 }
 
