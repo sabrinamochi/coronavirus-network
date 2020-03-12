@@ -14,7 +14,7 @@ var circlePadding = 2;
 var nodeG = svg.append("g").attr("class", "nodeG");
 var nodeParent = nodeG.selectAll(".circleGroup");
 var xCenter = [width / 4, width * 3 / 4];
-var yCenter = [0, height * 1 / 6, height * 2 / 6, height * 4 / 6];
+var yCenter = [0, height * 1 / 6, height * 2 / 6, height * 0.5];
 var forceX = d3.forceX()
             .x(function (d) { return xCenter[d.xCluster]; })
             .strength(0.25);
@@ -85,7 +85,6 @@ d3.csv("data/cases_in_NewEngland.csv", function (err, dataset) {
     });
     // initial state
     drawPlot(processData(initialData));
-    drawLegend(initialData);
 
 
     // Slider
@@ -257,7 +256,6 @@ function drawPlot(nodes) {
     simulation.alpha(1).restart();
     // updateForce(nodes);
 }
-
 
 function ticked() {
     d3.selectAll(".nodeCircle")
