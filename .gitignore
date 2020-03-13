@@ -4,3 +4,4 @@ src/main.*
 src/*-csv.js
 src/*.js
 build/
+iframe.html
