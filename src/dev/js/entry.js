@@ -303,7 +303,7 @@ function drawNodes(data) {
         Location: ${d.location}<br>
         Case type: ${d.caseType.charAt(0).toUpperCase() + d.caseType.slice(1)}<br>
         Date: ${d.date}<br>
-        Details: ${details}
+        ${details}
       `;
 
       tooltip.style("visibility", "visible")
