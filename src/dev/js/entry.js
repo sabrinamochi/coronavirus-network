@@ -1,27 +1,25 @@
-/*eslint-disable*/
-import {
-  csv
-} from 'd3-request';
+import { csv } from 'd3-request';
 
 // General settings
 // SVG
-let {
-  width,
-  height
-} = d3.select('#chart').node().getBoundingClientRect();
-let svg = d3.select("#chart")
+
+const chartDiv = d3.select('#chart');
+const { width, height } = chartDiv.node().getBoundingClientRect();
+
+const svg = chartDiv
   .append("svg")
-  .attr("width", width)
-  .attr("height", height)
-  .attr("viewBox", [0, 0, width, height]);
+  .attr('width', width)
+  .attr('height', height)
+  .attr('viewBox', [0, 0, width, height]);
 
 // Chart
 const radius = window.innerWidth < 500 ? 11 : 15;
 const circlePadding = 2;
-const nodeG = svg.append("g").attr("class", "nodeG");
+const nodeG = svg.append("g").attr('class', "nodeG");
 var nodeParent = nodeG.selectAll(".circleGroup");
-let xCenter = [width / 3, width * 2 / 3];
-let yCenter = [height / 8, height * 3 / 8, height * 5 / 8, height * 7 / 8];
+const xCenter = [width / 3, width * 2 / 6, 0.66 * width];
+const yCenter = [height / 10, height * 3 / 8, height * 5 / 8, height * 7 / 8];
+
 const forceX = d3.forceX()
   .x(d => xCenter[d.xCluster])
   .strength(0.25);
@@ -44,13 +42,13 @@ const center = d3.forceCenter()
 
 const simulation = d3.forceSimulation()
   .velocityDecay(0.8)
-  .force("charge", charge)
-  .force("collide", forceCollide)
-  .force("center", center)
-  .force("x", forceX)
-  .force("y", forceY)
+  .force('charge', charge)
+  .force('collide', forceCollide)
+  .force('center', center)
+  .force('x', forceX)
+  .force('y', forceY)
   .alphaTarget(0.8)
-  .on("tick", ticked);
+  .on('tick', ticked);
 
 const colorScale = d3.scaleOrdinal()
   .domain(["Imported", "Saint Raphael Academy Trip to Europe", "Biogen", "Unknown", "Berkshire Medical Center"])
@@ -59,7 +57,7 @@ const colorScale = d3.scaleOrdinal()
 /* ADD A TOOLTIP TO THE NODES */
 const tooltip = d3.select("#chart")
   .append("div")
-  .attr("class", "tooltip bentonsanscond-regular");
+  .attr('class', "tooltip bentonsanscond-regular");
 
 // Slider
 var dateSlider = document.querySelector(".date-slider");
@@ -76,9 +74,9 @@ csv('assets/cases_in_NewEngland.csv', (err, dataset) => {
   }
   const initialData = dataset;
 
-  // initialData.forEach(function(d){
-  //   d.infection_type.replace('Imported', 'Other source');
-  // });
+  initialData.forEach(function(d){
+    d.infection_type.replace('Imported', 'Other source');
+  });
   // initial state
   drawPlot(processData(initialData));
 
@@ -163,11 +161,6 @@ csv('assets/cases_in_NewEngland.csv', (err, dataset) => {
   //   }
 });
 
-
-function uniqueData(date, index, self) {
-  return self.indexOf(date) === index;
-}
-
 function updateData(value, data) {
   var filteredData;
   for (var i = 0; i < value + 1; i++) {
@@ -190,7 +183,7 @@ function updateData(value, data) {
 function processData(data) {
   data = data.filter(d => d.infection_type !== "");
 
-  data.forEach(function (d) {
+  data.forEach(d => {
     d.index = +d.index;
     d.location_num = +d.location_num;
   });
@@ -198,19 +191,20 @@ function processData(data) {
   const nodes = data.map((d) => {
     let xi, yi;
 
-    if (d.case_abbr == "VT" || d.case_abbr == "CT") {
+    if (d.case_abbr === "VT" || d.case_abbr === "CT") {
       xi = 0;
     } else {
       xi = 1;
     }
 
-    if (d.case_abbr == "ME") {
+    if (d.case_abbr === "ME") {
+      xi = 1;
       yi = 0;
-    } else if (d.case_abbr == "VT" || d.case_abbr == "N.H.") {
+    } else if (d.case_abbr === "VT" || d.case_abbr === "N.H.") {
       yi = 1;
-    } else if (d.case_abbr == "MA") {
+    } else if (d.case_abbr === "MA") {
       yi = 2;
-    } else if (d.case_abbr == "R.I." || d.case_abbr == "CT") {
+    } else if (d.case_abbr === "R.I." || d.case_abbr === "CT") {
       yi = 3;
     }
 
@@ -229,6 +223,7 @@ function processData(data) {
 
     }
   });
+  // console.log(nodes.filter(d => d.location === 'Maine')[0]);
   return nodes;
 }
 
@@ -246,10 +241,9 @@ function ticked() {
     .attr("cy", d => Math.max(radius, Math.min(height - radius, d.y)));
 
   d3.selectAll(".nodeLabel")
-    .attr("x", d => Math.max(radius, radius, Math.min(width - radius, d.x)))
-    .attr("y", d => Math.max(radius, Math.min(height - radius, d.y)));
+    .attr('x', d => Math.max(radius, radius, Math.min(width - radius, d.x)))
+    .attr('y', d => Math.max(radius, Math.min(height - radius, d.y)));
 }
-
 
 function drawNodes(data) {
   /* DRAW THE NODES */
@@ -262,10 +256,10 @@ function drawNodes(data) {
 
   var nodeParentEnter = nodeParent.enter()
     .append("g")
-    .attr("class", "circleGroup");
+    .attr('class', "circleGroup");
 
   nodeParentEnter.append("circle")
-    .attr("class", "nodeCircle")
+    .attr('class', "nodeCircle")
     .attr("stroke", "#fff")
     .attr("stroke-width", 1.5)
     .attr("r", radius)
@@ -276,13 +270,12 @@ function drawNodes(data) {
     });
 
   nodeParentEnter.append("text")
-    .attr("class", "nodeLabel bentonsanscond-regular")
+    .attr('class', "nodeLabel bentonsanscond-regular")
     .text(function (d) {
       if (d.type !== "") {
         return d.name;
-      } else {
-        return d.name.charAt(0);
       }
+      return d.name.charAt(0);
     })
     .attr("text-anchor", "middle")
     .attr("cx", d => d.x)
@@ -311,8 +304,8 @@ function drawNodes(data) {
         .style("left", `${cx}px`)
         .style("top", mouseCoords[1] - tooltip.node().getBoundingClientRect().height - 20 + "px")
 
-
       d3.selectAll(".nodeCircle").attr("opacity", 0.2);
+
       d3.select(this)
         .attr("opacity", 1)
         .classed('highlight', true);
@@ -325,35 +318,37 @@ function drawNodes(data) {
     });
 }
 
-resize();
-d3.select(window).on("resize", resize);
-
 function resize() {
-  
-  width = d3.select('#chart').node().getBoundingClientRect().width;
-  height = d3.select('#chart').node().getBoundingClientRect().height;
+  const newWidth = chartDiv.node().getBoundingClientRect().width;
+  const newHeight = chartDiv.node().getBoundingClientRect().height;
 
-  svg.attr("width", width)
-    .attr("height", height)
-    .attr("viewBox", [0, 0, width, height]);
+  console.log(newWidth, newHeight)
 
-  xCenter = [width / 3, width * 2 / 3];
-  yCenter = [height / 8, height * 3 / 8, height * 5 / 8, height * 7 / 8];
+  svg.attr('width', newWidth)
+    .attr('height', newHeight)
+    .attr('viewBox', [0, 0, newWidth, newHeight]);
 
- forceX
-    .x(d => xCenter[d.xCluster]);
+  const newX = [newWidth / 3, newWidth * 2 / 3];
+  const newY = [newHeight / 8, newHeight * 3 / 8, newHeight * 5 / 8, newHeight * 7 / 8];
 
- forceY
-    .y(d => yCenter[d.yCluster]);
+  forceX
+    .x(d => newX[d.xCluster]);
+
+  forceY
+    .y(d => newY[d.yCluster]);
 
   center
     .x(width / 2)
     .y(height / 2);
 
-  simulation.force("x", forceX)
-    .force("y", forceY)
-    .force("center", center)
-    .alphaTarget(0.8).restart();
-
-  
+  simulation
+    .force('x', forceX)
+    .force('y', forceY)
+    .force('center', center)
+    .alphaTarget(0.8)
+    .restart();
 }
+
+resize();
+
+d3.select(window).on('resize', resize);

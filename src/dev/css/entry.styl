@@ -67,6 +67,9 @@ set-font('bentonsanscond-bold')
       font-size 1rem
       margin-bottom 1rem
 
+  &__legend
+    margin .5rem auto
+
 .source-and-credit
   clear both
   width 100%
@@ -98,11 +101,12 @@ set-font('bentonsanscond-bold')
 main,
 .list-container,
 .legend,
-#container,
-#chart {
+#container
   display: block;
   text-align: center;
-}
+
+#chart
+  margin 1em auto
 
 p {
   font-size: 18px;
@@ -115,16 +119,6 @@ h1 {
   font-weight: 600;
   color: black;
   margin: 2em 0 .5em;
-}
-
-.legend {
-  font-size: 18px;
-  align-content: center;
-}
-
-#container {
-  margin: 0px;
-  padding: 0px;
 }
 
 .date-slider-container {
@@ -180,6 +174,9 @@ h1 {
   text-align left
   +mq(bp-2)
     max-width 400px
+
+.legend
+  margin-bottom 1em
 
 .legend-box {
   width: 20px;
