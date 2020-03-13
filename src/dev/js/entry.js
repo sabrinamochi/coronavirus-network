@@ -29,7 +29,7 @@ const forceY = d3.forceY()
 
 const forceCollide = d3.forceCollide()
   .radius(radius + circlePadding)
-  .strength(1)
+  // .strength(0.5)
 
 const charge = d3.forceManyBody()
   .strength(smallScreen ? -90 : -130)
@@ -40,11 +40,11 @@ const center = d3.forceCenter()
   .y(height / 2);
 
 const groupingForce = forceInABox()
-  .strength(0.17) // Strength to foci
+  .strength(0.2) // Strength to foci
   .template('force') // Either treemap or force
   .groupBy('type') // Node attribute to group
   .size([width, height])
-  .forceCharge(smallScreen ? -200 : -100);
+  .forceCharge(smallScreen ? -200 : -80);
 
 const simulation = d3.forceSimulation()
   .velocityDecay(0.7)
@@ -55,7 +55,7 @@ const simulation = d3.forceSimulation()
   // .force('x', forceX)
   // .force('y', forceY)
   // .alphaTarget(0.8)
-  // .stop()
+  .stop()
   // .on('tick', ticked);
 
 const colorScale = d3.scaleOrdinal()
