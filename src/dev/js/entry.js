@@ -1,5 +1,5 @@
 import { csv } from 'd3-request';
-
+import forceInABox from 'force-in-a-box';
 // General settings
 // SVG
 
@@ -12,8 +12,10 @@ const svg = chartDiv
   .attr('height', height)
   .attr('viewBox', [0, 0, width, height]);
 
+const smallScreen = window.innerWidth < 500 ? true : false;
+
 // Chart
-const radius = window.innerWidth < 500 ? 11 : 15;
+const radius = smallScreen ? 12 : 13.5;
 const circlePadding = 2;
 const nodeG = svg.append("g").attr('class', "nodeG");
 var nodeParent = nodeG.selectAll(".circleGroup");
@@ -30,25 +32,34 @@ const forceY = d3.forceY()
 
 const forceCollide = d3.forceCollide()
   .radius(radius + circlePadding)
-  .strength(0.7);
+  .strength(1)
 
 const charge = d3.forceManyBody()
-  .strength(-80)
-  .distanceMin(2 * radius);
+  .strength(smallScreen ? -90 : -130)
+  .distanceMin(2 * radius)
 
 const center = d3.forceCenter()
   .x(width / 2)
   .y(height / 2);
 
+const groupingForce = forceInABox()
+  .strength(0.17) // Strength to foci
+  .template('force') // Either treemap or force
+  .groupBy('type') // Node attribute to group
+  .size([width, height])
+  .forceCharge(smallScreen ? -250 : -100);
+
 const simulation = d3.forceSimulation()
-  .velocityDecay(0.8)
+  .velocityDecay(0.7)
   .force('charge', charge)
   .force('collide', forceCollide)
   .force('center', center)
-  .force('x', forceX)
-  .force('y', forceY)
-  .alphaTarget(0.8)
-  .on('tick', ticked);
+  .force('group', groupingForce)
+  // .force('x', forceX)
+  // .force('y', forceY)
+  // .alphaTarget(0.8)
+  // .stop()
+  // .on('tick', ticked);
 
 const colorScale = d3.scaleOrdinal()
   .domain(["Imported", "Saint Raphael Academy Trip to Europe", "Biogen", "Unknown", "Berkshire Medical Center"])
@@ -223,7 +234,7 @@ function processData(data) {
 
     }
   });
-  // console.log(nodes.filter(d => d.location === 'Maine')[0]);
+  console.log(nodes);
   return nodes;
 }
 
@@ -232,25 +243,25 @@ function drawPlot(nodes) {
   drawNodes(nodes);
   /* INITIALIZE THE FORCE SIMULATION */
   simulation.nodes(nodes);
-  simulation.alpha(1).restart();
+
+  simulation.tick(300);
+  ticked();
+  // simulation.alpha(1).restart();
 }
 
 function ticked() {
   d3.selectAll(".nodeCircle")
-    .attr("cx", d => Math.max(radius, radius, Math.min(width - radius, d.x)))
+    .attr("cx", d => Math.max(radius, Math.min(width - radius, d.x)))
     .attr("cy", d => Math.max(radius, Math.min(height - radius, d.y)));
 
   d3.selectAll(".nodeLabel")
-    .attr('x', d => Math.max(radius, radius, Math.min(width - radius, d.x)))
+    .attr('x', d => Math.max(radius, Math.min(width - radius, d.x)))
     .attr('y', d => Math.max(radius, Math.min(height - radius, d.y)));
 }
 
 function drawNodes(data) {
   /* DRAW THE NODES */
-  nodeParent = nodeParent
-    .data(data, function (d) {
-      return d.id;
-    });
+  nodeParent = nodeParent.data(data, d => d.id);
 
   nodeParent.exit().remove();
 
