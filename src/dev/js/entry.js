@@ -1,60 +1,65 @@
 /*eslint-disable*/
-import { csv } from 'd3-request';
+import {
+  csv
+} from 'd3-request';
 
 // General settings
 // SVG
-const { width, height } = d3.select('#chart').node().getBoundingClientRect();
-const svg = d3.select("#chart")
-    .append("svg")
-    .attr("width", width)
-    .attr("height", height)
-    .attr("viewBox", [0, 0, width, height]);
+let {
+  width,
+  height
+} = d3.select('#chart').node().getBoundingClientRect();
+let svg = d3.select("#chart")
+  .append("svg")
+  .attr("width", width)
+  .attr("height", height)
+  .attr("viewBox", [0, 0, width, height]);
 
 // Chart
 const radius = window.innerWidth < 500 ? 11 : 15;
 const circlePadding = 2;
 const nodeG = svg.append("g").attr("class", "nodeG");
 var nodeParent = nodeG.selectAll(".circleGroup");
-const xCenter = [width / 3, width * 2 / 3];
-const yCenter = [0, height * 1 / 6, height * 2 / 6, height * 0.5];
+let xCenter = [width / 3, width * 2 / 3];
+let yCenter = [height / 8, height * 3 / 8, height * 5 / 8, height * 7 / 8];
 const forceX = d3.forceX()
-            .x(d =>  xCenter[d.xCluster])
-            .strength(0.25);
+  .x(d => xCenter[d.xCluster])
+  .strength(0.25);
 
 const forceY = d3.forceY()
-              .y(d => yCenter[d.yCluster])
-              .strength(0.25);
+  .y(d => yCenter[d.yCluster])
+  .strength(0.25);
 
 const forceCollide = d3.forceCollide()
-                    .radius(radius + circlePadding)
-                    .strength(0.7);
+  .radius(radius + circlePadding)
+  .strength(0.7);
 
 const charge = d3.forceManyBody()
-                .strength(-80)
-                .distanceMin(2 * radius);
+  .strength(-80)
+  .distanceMin(2 * radius);
 
 const center = d3.forceCenter()
-                .x(width / 2)
-                .y(height / 2);
+  .x(width / 2)
+  .y(height / 2);
 
 const simulation = d3.forceSimulation()
-    .velocityDecay(0.8)
-    .force("charge", charge)
-    .force("collide", forceCollide)
-    .force("center", center)
-    .force("x", forceX)
-    .force("y", forceY)
-    .alphaTarget(0.8)
-    .on("tick", ticked);
+  .velocityDecay(0.8)
+  .force("charge", charge)
+  .force("collide", forceCollide)
+  .force("center", center)
+  .force("x", forceX)
+  .force("y", forceY)
+  .alphaTarget(0.8)
+  .on("tick", ticked);
 
 const colorScale = d3.scaleOrdinal()
-    .domain(["Other source", "Saint Raphael Academy Trip to Europe", "Biogen", "Unknown"])
-    .range(["#A62639", "#E0CA3C", "#80a4ed", "#aba194"]);
+  .domain(["Imported", "Saint Raphael Academy Trip to Europe", "Biogen", "Unknown", "Berkshire Medical Center"])
+  .range(["#A62639", "#E0CA3C", "#80a4ed", "#aba194", "#85bb65"]);
 
 /* ADD A TOOLTIP TO THE NODES */
 const tooltip = d3.select("#chart")
-    .append("div")
-    .attr("class", "tooltip bentonsanscond-regular");
+  .append("div")
+  .attr("class", "tooltip bentonsanscond-regular");
 
 // Slider
 var dateSlider = document.querySelector(".date-slider");
@@ -66,7 +71,9 @@ var moving = false;
 var currentValue, initialValue, targetValue, timeRange, dateToNumberScale;
 
 csv('assets/cases_in_NewEngland.csv', (err, dataset) => {
-  if (err) { throw err; }
+  if (err) {
+    throw err;
+  }
   const initialData = dataset;
 
   // initialData.forEach(function(d){
@@ -75,85 +82,85 @@ csv('assets/cases_in_NewEngland.csv', (err, dataset) => {
   // initial state
   drawPlot(processData(initialData));
 
-//   // Slider
-//   var sliderData = dataset.map(function (d) {
-//       if (d.date !== "") {
-//           return d.date;
-//       }
-//   });
-//   sliderData = sliderData.filter(uniqueData);
-//   sliderData.shift(); // Remove Feb 1
+  //   // Slider
+  //   var sliderData = dataset.map(function (d) {
+  //       if (d.date !== "") {
+  //           return d.date;
+  //       }
+  //   });
+  //   sliderData = sliderData.filter(uniqueData);
+  //   sliderData.shift(); // Remove Feb 1
 
-//   dateToNumberScale = d3.scaleOrdinal()
-//       .domain(sliderData)
-//       .range(d3.range(0, sliderData.length, 1));
+  //   dateToNumberScale = d3.scaleOrdinal()
+  //       .domain(sliderData)
+  //       .range(d3.range(0, sliderData.length, 1));
 
-//   // custom invert function
-//   dateToNumberScale.invert = (function () {
-//       var domain = dateToNumberScale.domain()
-//       var range = dateToNumberScale.range()
-//       var scale = d3.scaleOrdinal()
-//       .domain(range)
-//       .range(domain);
+  //   // custom invert function
+  //   dateToNumberScale.invert = (function () {
+  //       var domain = dateToNumberScale.domain()
+  //       var range = dateToNumberScale.range()
+  //       var scale = d3.scaleOrdinal()
+  //       .domain(range)
+  //       .range(domain);
 
-//       return function (x) {
-//           return scale(x)
-//       }
-//   })();
+  //       return function (x) {
+  //           return scale(x)
+  //       }
+  //   })();
 
-//   var step = 1;
-//   let timer;
-//   var minDate = dateToNumberScale(sliderData[0]);
-//   var maxDate = dateToNumberScale(sliderData[sliderData.length - 1]);
+  //   var step = 1;
+  //   let timer;
+  //   var minDate = dateToNumberScale(sliderData[0]);
+  //   var maxDate = dateToNumberScale(sliderData[sliderData.length - 1]);
 
-//   dateSlider.step = step;
-//   dateSlider.min = minDate;
-//   dateSlider.max = maxDate;
-//   dateSlider.value = maxDate;
+  //   dateSlider.step = step;
+  //   dateSlider.min = minDate;
+  //   dateSlider.max = maxDate;
+  //   dateSlider.value = maxDate;
 
-//   initialValue = d3.min(d3.range(0, sliderData.length, 1));
-//   targetValue = d3.max(d3.range(0, sliderData.length, 1));
+  //   initialValue = d3.min(d3.range(0, sliderData.length, 1));
+  //   targetValue = d3.max(d3.range(0, sliderData.length, 1));
 
-//   currentValue = targetValue;
-//   dateOutput.innerHTML = dateToNumberScale.invert(currentValue);
+  //   currentValue = targetValue;
+  //   dateOutput.innerHTML = dateToNumberScale.invert(currentValue);
 
-//   dateSlider.oninput = function () {
-//     buttonClicked++;
-//     currentValue = +this.value;
-//     updateData(currentValue, dataset);
-//   }
+  //   dateSlider.oninput = function () {
+  //     buttonClicked++;
+  //     currentValue = +this.value;
+  //     updateData(currentValue, dataset);
+  //   }
 
-//   playButton.on("click", function () {
-//     var button = d3.select(this);
-//     if (button.text() === "Pause") {
-//       moving = false;
-//       clearInterval(timer);
-//       button.text("Play");
-//     } else {
-//       moving = true;
-//       timer = setInterval(sliderMove, 1000);
-//       button.text("Pause");
-//     }
-//   });
+  //   playButton.on("click", function () {
+  //     var button = d3.select(this);
+  //     if (button.text() === "Pause") {
+  //       moving = false;
+  //       clearInterval(timer);
+  //       button.text("Play");
+  //     } else {
+  //       moving = true;
+  //       timer = setInterval(sliderMove, 1000);
+  //       button.text("Pause");
+  //     }
+  //   });
 
-//   function sliderMove() {
-//     buttonClicked++;
-//     if (buttonClicked === 1) {
-//       currentValue = 0;
-//     } else {
-//       currentValue = currentValue + step;
-//     }
+  //   function sliderMove() {
+  //     buttonClicked++;
+  //     if (buttonClicked === 1) {
+  //       currentValue = 0;
+  //     } else {
+  //       currentValue = currentValue + step;
+  //     }
 
-//     if (currentValue > targetValue - 1) {
-//       moving = false;
-//       clearInterval(timer);
-//       playButton.text("Play");
-//       buttonClicked = 0;
-//     }
+  //     if (currentValue > targetValue - 1) {
+  //       moving = false;
+  //       clearInterval(timer);
+  //       playButton.text("Play");
+  //       buttonClicked = 0;
+  //     }
 
-//     dateSlider.value = currentValue;
-//     updateData(currentValue, dataset);
-//   }
+  //     dateSlider.value = currentValue;
+  //     updateData(currentValue, dataset);
+  //   }
 });
 
 
@@ -183,7 +190,6 @@ function updateData(value, data) {
 function processData(data) {
   data = data.filter(d => d.infection_type !== "");
 
-  // var nodesData = [];
   data.forEach(function (d) {
     d.index = +d.index;
     d.location_num = +d.location_num;
@@ -192,13 +198,15 @@ function processData(data) {
   const nodes = data.map((d) => {
     let xi, yi;
 
-    if (d.case_abbr == "N.H." || d.case_abbr == "MA" || d.case_abbr == "R.I.") {
-      xi = 1;
-    } else {
+    if (d.case_abbr == "VT" || d.case_abbr == "CT") {
       xi = 0;
+    } else {
+      xi = 1;
     }
 
-    if (d.case_abbr == "VT" || d.case_abbr == "N.H.") {
+    if (d.case_abbr == "ME") {
+      yi = 0;
+    } else if (d.case_abbr == "VT" || d.case_abbr == "N.H.") {
       yi = 1;
     } else if (d.case_abbr == "MA") {
       yi = 2;
@@ -216,7 +224,9 @@ function processData(data) {
       location: d.location,
       locationNum: d.location_num,
       caseType: d.case_type,
+      date: d.date,
       details: d.details
+
     }
   });
   return nodes;
@@ -228,7 +238,6 @@ function drawPlot(nodes) {
   /* INITIALIZE THE FORCE SIMULATION */
   simulation.nodes(nodes);
   simulation.alpha(1).restart();
-  // updateForce(nodes);
 }
 
 function ticked() {
@@ -241,52 +250,46 @@ function ticked() {
     .attr("y", d => Math.max(radius, Math.min(height - radius, d.y)));
 }
 
-// function updateForce(data){
-//     simulation.alpha(1).restart();
-//     simulation.force("y").initialize(data);
-//     simulation.force("x").initialize(data);
-
-// }
 
 function drawNodes(data) {
   /* DRAW THE NODES */
   nodeParent = nodeParent
-      .data(data, function (d) {
-          return d.id;
-      });
+    .data(data, function (d) {
+      return d.id;
+    });
 
   nodeParent.exit().remove();
 
   var nodeParentEnter = nodeParent.enter()
-      .append("g")
-      .attr("class", "circleGroup");
+    .append("g")
+    .attr("class", "circleGroup");
 
   nodeParentEnter.append("circle")
-      .attr("class", "nodeCircle")
-      .attr("stroke", "#fff")
-      .attr("stroke-width", 1.5)
-      .attr("r", radius)
-      .attr("cx", d => d.x)
-      .attr("cy", d => d.y)
-      .attr("fill", function (d) {
-          return colorScale(d.type);
-      });
+    .attr("class", "nodeCircle")
+    .attr("stroke", "#fff")
+    .attr("stroke-width", 1.5)
+    .attr("r", radius)
+    .attr("cx", d => d.x)
+    .attr("cy", d => d.y)
+    .attr("fill", function (d) {
+      return colorScale(d.type);
+    });
 
   nodeParentEnter.append("text")
-      .attr("class", "nodeLabel bentonsanscond-regular")
-      .text(function (d) {
-          if (d.type !== "") {
-              return d.name;
-          } else {
-              return d.name.charAt(0);
-          }
-      })
-      .attr("text-anchor", "middle")
-      .attr("cx", d => d.x)
-      .attr("cy", d => d.y)
-      .attr("dy", 3)
-      .style("font-size", "12px")
-      .style("pointer-events", "none");
+    .attr("class", "nodeLabel bentonsanscond-regular")
+    .text(function (d) {
+      if (d.type !== "") {
+        return d.name;
+      } else {
+        return d.name.charAt(0);
+      }
+    })
+    .attr("text-anchor", "middle")
+    .attr("cx", d => d.x)
+    .attr("cy", d => d.y)
+    .attr("dy", 3)
+    .style("font-size", "12px")
+    .style("pointer-events", "none");
 
   nodeParent = nodeParentEnter.merge(nodeParent);
 
@@ -299,7 +302,8 @@ function drawNodes(data) {
       const description = `
         Location: ${d.location}<br>
         Case type: ${d.caseType.charAt(0).toUpperCase() + d.caseType.slice(1)}<br>
-        ${details}
+        Date: ${d.date}<br>
+        Details: ${details}
       `;
 
       tooltip.style("visibility", "visible")
@@ -310,13 +314,46 @@ function drawNodes(data) {
 
       d3.selectAll(".nodeCircle").attr("opacity", 0.2);
       d3.select(this)
-      .attr("opacity", 1)
-      .classed('highlight', true);
+        .attr("opacity", 1)
+        .classed('highlight', true);
     })
     .on("mouseout", function () {
       tooltip.style("visibility", "hidden");
       d3.selectAll(".nodeCircle")
         .attr("opacity", 1)
         .classed('highlight', false);
-  });
+    });
+}
+
+resize();
+d3.select(window).on("resize", resize);
+
+function resize() {
+  
+  width = d3.select('#chart').node().getBoundingClientRect().width;
+  height = d3.select('#chart').node().getBoundingClientRect().height;
+
+  svg.attr("width", width)
+    .attr("height", height)
+    .attr("viewBox", [0, 0, width, height]);
+
+  xCenter = [width / 3, width * 2 / 3];
+  yCenter = [height / 8, height * 3 / 8, height * 5 / 8, height * 7 / 8];
+
+ forceX
+    .x(d => xCenter[d.xCluster]);
+
+ forceY
+    .y(d => yCenter[d.yCluster]);
+
+  center
+    .x(width / 2)
+    .y(height / 2);
+
+  simulation.force("x", forceX)
+    .force("y", forceY)
+    .force("center", center)
+    .alphaTarget(0.8).restart();
+
+  
 }
