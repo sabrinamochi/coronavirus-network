@@ -1,6 +1,6 @@
 // General settings
 // SVG
-var width = document.querySelector("#chart").clientWidth * 0.6;
+var width = document.querySelector("#chart").clientWidth ;
 var height = document.querySelector("#chart").clientHeight;
 var svg = d3.select("#chart")
     .append("svg")
@@ -12,8 +12,8 @@ var radius = 20;
 var circlePadding = 2;
 var nodeG = svg.append("g").attr("class", "nodeG");
 var nodeParent = nodeG.selectAll(".circleGroup");
-var xCenter = [width / 4, width * 3 / 4];
-var yCenter = [0, height * 1 / 6, height * 3 / 6, height * 5 / 6];
+var xCenter = [width/4, width * 2.5 / 4];
+var yCenter = [height/8, height * 3 / 8, height * 5 / 8, height * 7 / 8];
 var simulation = d3.forceSimulation()
     .force("charge", d3.forceManyBody().strength())
     .force("collide", d3.forceCollide().radius(radius + circlePadding))
@@ -24,9 +24,10 @@ var simulation = d3.forceSimulation()
         return yCenter[d.yCluster];
     }))
     .on("tick", ticked);
+
 var colorScale = d3.scaleOrdinal()
-    .domain(["Imported", "Saint Raphael Academy Trip to Europe", "Biogen", "Unknown"])
-    .range(["#A62639", "#E0CA3C", "#80a4ed", "#aba194"]);
+    .domain(["Imported", "Saint Raphael Academy Trip to Europe", "Biogen", "Unknown", "Berkshire Medical Center"])
+    .range(["#A62639", "#E0CA3C", "#80a4ed", "#aba194", "#85bb65"]);
 
 /* ADD A TOOLTIP TO THE NODES */
 var tooltip = d3.select("#chart")
@@ -35,7 +36,7 @@ var tooltip = d3.select("#chart")
 
 // Legend
 var legendWidth = width;
-var legendHeight = height / 10;
+var legendHeight = height/4;
 var legendSvg = d3.select(".legend").append("svg")
     .attr("width", legendWidth)
     .attr("height", legendHeight)
@@ -46,10 +47,11 @@ var legendSvg = d3.select(".legend").append("svg")
 var dateSlider = document.querySelector(".date-slider");
 var formatTime = d3.timeFormat("%m/%d/%Y");
 var dateOutput = document.querySelector(".date-text");
-var playButton = d3.select("#play-button").text("Play");
+var playButton = d3.select("#play-button").append("text").attr("class", "button-text").text("Play");
 var buttonClicked = 0;
 var moving = false;
 var currentValue, initialValue, targetValue, timeRange, dateToNumberScale;
+
 
 d3.csv("data/cases_in_NewEngland.csv").then(function (dataset) {
 
@@ -61,12 +63,13 @@ d3.csv("data/cases_in_NewEngland.csv").then(function (dataset) {
 
     // Slider
     var sliderData = dataset.map(function (d) {
-        if (d.date !== "") {
+        if (d.date !== undefined) {
             return d.date;
         }
     })
+    sliderData = sliderData.filter(Boolean); 
     sliderData = sliderData.filter(uniqueData);
-    sliderData.shift(); // Remove Feb 1 
+    sliderData.shift(); 
 
     dateToNumberScale = d3.scaleOrdinal()
         .domain(sliderData)
@@ -77,12 +80,15 @@ d3.csv("data/cases_in_NewEngland.csv").then(function (dataset) {
     dateToNumberScale.invert = (function () {
         var domain = dateToNumberScale.domain()
         var range = dateToNumberScale.range()
-        var scale = d3.scaleOrdinal().domain(range).range(domain)
+        var scale = d3.scaleOrdinal().domain(range).range(domain);
 
         return function (x) {
             return scale(x)
         }
     })();
+
+    console.log(sliderData)
+
 
     var step = 1;
 
@@ -193,13 +199,16 @@ function processData(data) {
     var nodes = data.map(function (d) {
         var xi;
         var yi;
-        if (d.case_abbr == "N.H." || d.case_abbr == "MA" || d.case_abbr == "R.I.") {
-            xi = 1;
-        } else {
+        if (d.case_abbr == "VT" || d.case_abbr == "CT") {
             xi = 0;
+        } else {
+            xi = 1;
         }
 
-        if (d.case_abbr == "VT" || d.case_abbr == "N.H.") {
+        if (d.case_abbr == "ME"){
+            yi = 0;
+        }
+        else if (d.case_abbr == "VT" || d.case_abbr == "N.H.") {
             yi = 1;
         } else if (d.case_abbr == "MA") {
             yi = 2;
@@ -217,6 +226,7 @@ function processData(data) {
             location: d.location,
             locationNum: d.location_num,
             caseType: d.case_type,
+            date: d.date,
             details: d.details
         };
         return d;
@@ -245,13 +255,6 @@ function ticked() {
         .attr("y", d => Math.max(radius, Math.min(height - radius, d.y)));
 
 }
-
-// function updateForce(data){
-//     simulation.alpha(1).restart();     
-//     simulation.force("y").initialize(data);
-//     simulation.force("x").initialize(data);
-
-// }
 
 function drawNodes(data) {
     /* DRAW THE NODES */
@@ -290,7 +293,6 @@ function drawNodes(data) {
         .attr("cx", d => d.x)
         .attr("cy", d => d.y)
         .attr("dy", 3)
-        .style("font-size", "12px")
         .style("pointer-events", "none");
 
     nodeParent = nodeParentEnter.merge(nodeParent);
@@ -305,8 +307,8 @@ function drawNodes(data) {
 
                 var description =
                     "Location: " + d.location + "</br>" +
-                    "Case Type: " + d.caseType + " case</br>" +
-                    d.details;
+                    "Date: " + d.date + "</br>" +
+                    "Details: " + d.details;
 
                 return description;
 
@@ -330,8 +332,7 @@ function drawLegend(dataset) {
     })
 
     var legendCircleRadius = 10;
-    var xGap = 10;
-    var yGap = 20;
+    var gap = 10;
 
     var legendText = legendSvg.selectAll(".legendText")
         .data(legendData).enter();
@@ -340,57 +341,59 @@ function drawLegend(dataset) {
         .attr("class", "legendText")
         .text(function (d) {
             return d.case_abbr;
-        })
-        .attr("y", yGap + 5);
-
-    var textGroup = document.getElementsByClassName("legendText");
+        });
 
     var legendCircle = legendSvg.selectAll("circle")
-        .data(legendData).enter();
+        .data(legendData).enter()
+        .append("circle")
+            .attr("r", legendCircleRadius)
+            .attr("fill", function (d) {
+                return colorScale(d.case_abbr)
+            });
 
-    legendCircle.append("circle")
-        .attr("r", legendCircleRadius)
-        .attr("fill", function (d) {
-            return colorScale(d.case_abbr)
-        })
-        .attr("cx", function (d, i) {
+    legendCircle
+        .attr("cx", 20)
+        .attr("cy", function(d, i){
 
-            if (i == 0) {
-                return i * legendCircleRadius * 5 + xGap;
-            } else {
-                var array = d3.range(0, i, 1);
-                var textWidthList = [];
-                for (var k = 0; k < array.length; k++) {
-                    var textWidth = textGroup[k].getBBox().width;
-                    textWidthList.push(textWidth);
-                }
-                textTotalWidth = textWidthList.reduce(function (acc, val) {
-                    return acc + val;
-                }, 0)
-                return (i * legendCircleRadius * 5 + xGap) + textTotalWidth;
-            }
-        })
-        .attr("cy", yGap);
+            return i * (gap + 2 * legendCircleRadius) + gap;
+        });
 
-    legendText.selectAll(".legendText").attr("x", function (d, i) {
+    legendText.selectAll(".legendText").attr("x", gap * 4)
+    .attr("y", function(d, i){
 
-        if (i == 0) {
-            return i * legendCircleRadius * 5 + xGap + 15;
-        } else {
-            var array = d3.range(0, i, 1);
-            var textWidthList = [];
-            for (var k = 0; k < array.length; k++) {
-                var textWidth = textGroup[k].getBBox().width;
-                textWidthList.push(textWidth);
-            }
-            textTotalWidth = textWidthList.reduce(function (acc, val) {
-                return acc + val;
-            }, 15)
-            return (i * legendCircleRadius * 5 + xGap) + textTotalWidth;
-        }
+        return i * (gap + 2 * legendCircleRadius) + gap;
     })
 
-    var legendGroupObj = document.querySelector("#legendGroup")
+    var legendGroupObj = document.querySelector("#legendGroup");
     var lgdGroupObjWidth = legendGroupObj.getBBox().width;
     legendSvg.attr("transform", `translate(${width / 2 - lgdGroupObjWidth / 2}, 0)`)
+}
+
+// make force layout reponsive
+
+resize();
+d3.select(window).on("resize", resize);
+function resize() {
+    width = document.querySelector("#chart").clientWidth, 
+    height = document.querySelector("#chart").clientHeight;
+
+    svg.attr("width", width).attr("height", height);
+
+    xCenter = [width / 4, width * 2.5 / 4],
+    yCenter = [height / 8, height * 3 / 8, height * 5 / 8, height * 7 / 8];
+    simulation
+        .force("x", d3.forceX().x(function (d) {
+            return xCenter[d.xCluster];
+        }))
+        .force("y", d3.forceY().y(function (d) {
+            return yCenter[d.yCluster];
+        })).alpha(1).restart();
+
+    legendWidth = width, legendHeight = height / 4;
+    legendSvg 
+        .attr("width", legendWidth)
+        .attr("height", legendHeight);
+
+
+
 }
