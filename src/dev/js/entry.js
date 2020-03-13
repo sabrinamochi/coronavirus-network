@@ -1,7 +1,4 @@
 import { csv } from 'd3-request';
-import forceInABox from 'force-in-a-box';
-// General settings
-// SVG
 
 const chartDiv = d3.select('#chart');
 const { width, height } = chartDiv.node().getBoundingClientRect();
@@ -47,7 +44,7 @@ const groupingForce = forceInABox()
   .template('force') // Either treemap or force
   .groupBy('type') // Node attribute to group
   .size([width, height])
-  .forceCharge(smallScreen ? -250 : -100);
+  .forceCharge(smallScreen ? -200 : -100);
 
 const simulation = d3.forceSimulation()
   .velocityDecay(0.7)
