@@ -12,7 +12,7 @@ const svg = chartDiv
 const smallScreen = window.innerWidth < 500 ? true : false;
 
 // Chart
-const radius = smallScreen ? 10 : 13.5;
+const radius = smallScreen ? 9 : 13.5;
 const circlePadding = 2;
 const nodeG = svg.append('g').attr('class', 'nodeG');
 var nodeParent = nodeG.selectAll('.circleGroup');
@@ -32,7 +32,7 @@ const forceCollide = d3.forceCollide()
   // .strength(0.5)
 
 const charge = d3.forceManyBody()
-  .strength(smallScreen ? -60 : -120)
+  .strength(smallScreen ? -40 : -120)
   .distanceMin(2 * radius)
 
 const center = d3.forceCenter()
