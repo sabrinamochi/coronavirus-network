@@ -107,6 +107,11 @@ main,
 
 #chart
   margin 1em auto
+  width: 100vw;
+  height: 500px;
+  position: relative;
+  +mq(bp-2)
+    height 600px
 
 p {
   font-size: 18px;
@@ -151,13 +156,6 @@ h1 {
   letter-spacing 1px
   &:hover
     background darken($beige, 10)
-
-#chart {
-  width: 100vw;
-  height: 500px;
-  position: relative;
-
-}
 
 .tooltip
   position: absolute;
@@ -210,7 +208,7 @@ h1 {
 
 .nodeLabel
   fill rgb(255,255,255)
-  font-size 11px
+  font-size 10px
   +mq(bp-2)
     font-size 12px
 

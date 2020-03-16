@@ -12,10 +12,10 @@ const svg = chartDiv
 const smallScreen = window.innerWidth < 500 ? true : false;
 
 // Chart
-const radius = smallScreen ? 12 : 13.5;
+const radius = smallScreen ? 10 : 13.5;
 const circlePadding = 2;
-const nodeG = svg.append("g").attr('class', "nodeG");
-var nodeParent = nodeG.selectAll(".circleGroup");
+const nodeG = svg.append('g').attr('class', 'nodeG');
+var nodeParent = nodeG.selectAll('.circleGroup');
 const xCenter = [width / 3, width * 2 / 6, 0.66 * width];
 const yCenter = [height / 10, height * 3 / 8, height * 5 / 8, height * 7 / 8];
 
@@ -32,7 +32,7 @@ const forceCollide = d3.forceCollide()
   // .strength(0.5)
 
 const charge = d3.forceManyBody()
-  .strength(smallScreen ? -90 : -100)
+  .strength(smallScreen ? -60 : -120)
   .distanceMin(2 * radius)
 
 const center = d3.forceCenter()
@@ -40,11 +40,11 @@ const center = d3.forceCenter()
   .y(height / 2);
 
 const groupingForce = forceInABox()
-  .strength(0.2) // Strength to foci
+  .strength(smallScreen ? 0.2 : 0.25) // Strength to foci
   .template('force') // Either treemap or force
   .groupBy('type') // Node attribute to group
   .size([width, height])
-  .forceCharge(smallScreen ? -200 : -100);
+  .forceCharge(smallScreen ? -200 : -130);
 
 const simulation = d3.forceSimulation()
   .velocityDecay(0.7)
@@ -59,7 +59,7 @@ const simulation = d3.forceSimulation()
   // .on('tick', ticked);
 
 const colorScale = d3.scaleOrdinal()
-  .domain(["Imported", "Saint Raphael Academy Trip to Europe", "Biogen", "Unknown", "Berkshire Medical Center"])
+  .domain(["Other source", "Saint Raphael Academy Trip to Europe", "Biogen", "Unknown", "Berkshire Medical Center"])
   .range(["#A62639", "#E0CA3C", "#80a4ed", "#aba194", "#85bb65"]);
 
 /* ADD A TOOLTIP TO THE NODES */
@@ -83,7 +83,7 @@ csv('assets/cases_in_NewEngland.csv', (err, dataset) => {
   const initialData = dataset;
 
   initialData.forEach(function(d){
-    d.infection_type.replace('Imported', 'Other source');
+    d.infection_type = d.infection_type.replace('Imported', 'Other source');
   });
   // initial state
   drawPlot(processData(initialData));
@@ -208,11 +208,11 @@ function processData(data) {
     if (d.case_abbr === "ME") {
       xi = 1;
       yi = 0;
-    } else if (d.case_abbr === "VT" || d.case_abbr === "N.H.") {
+    } else if (d.case_abbr === "VT" || d.case_abbr === "NH") {
       yi = 1;
     } else if (d.case_abbr === "MA") {
       yi = 2;
-    } else if (d.case_abbr === "R.I." || d.case_abbr === "CT") {
+    } else if (d.case_abbr === "RI" || d.case_abbr === "CT") {
       yi = 3;
     }
 
@@ -273,9 +273,7 @@ function drawNodes(data) {
     .attr("r", radius)
     .attr("cx", d => d.x)
     .attr("cy", d => d.y)
-    .attr("fill", function (d) {
-      return colorScale(d.type);
-    });
+    .attr("fill", d => colorScale(d.type));
 
   nodeParentEnter.append("text")
     .attr('class', "nodeLabel bentonsanscond-regular")
@@ -288,9 +286,7 @@ function drawNodes(data) {
     .attr("text-anchor", "middle")
     .attr("cx", d => d.x)
     .attr("cy", d => d.y)
-    .attr("dy", 3)
-    .style("font-size", "12px")
-    .style("pointer-events", "none");
+    .attr("dy", 3);
 
   nodeParent = nodeParentEnter.merge(nodeParent);
 
