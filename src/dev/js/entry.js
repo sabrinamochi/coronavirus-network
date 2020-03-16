@@ -1,4 +1,5 @@
 import { csv } from 'd3-request';
+import { group, rollup } from 'd3-array';
 
 const chartDiv = d3.select('#chart');
 const { width, height } = chartDiv.node().getBoundingClientRect();
@@ -9,7 +10,14 @@ const svg = chartDiv
   .attr('height', height)
   .attr('viewBox', [0, 0, width, height]);
 
-const smallScreen = window.innerWidth < 500 ? true : false;
+const smallScreen = window.innerWidth <= 500 ? true : false;
+const getRadius = () => {
+  if (smallScreen) return 9;
+  if (window.innerWidth > 500 & window.innerWidth < 768) {
+    return 10;
+  }
+  return 12
+}
 
 // Chart
 const radius = smallScreen ? 9 : 13.5;
@@ -47,16 +55,16 @@ const groupingForce = forceInABox()
   .forceCharge(smallScreen ? -200 : -130);
 
 const simulation = d3.forceSimulation()
-  .velocityDecay(0.7)
-  .force('charge', charge)
-  .force('collide', forceCollide)
-  .force('center', center)
-  .force('group', groupingForce)
-  .force('x', forceX)
-  .force('y', forceY)
-  // .alphaTarget(0.8)
-  .stop()
-  // .on('tick', ticked);
+  // .velocityDecay(0.7)
+  // .force('charge', charge)
+  // .force('collide', forceCollide)
+  // .force('center', center)
+  // .force('group', groupingForce)
+  // .force('x', forceX)
+  // .force('y', forceY)
+  // // .alphaTarget(0.8)
+  // .stop()
+  // // .on('tick', ticked);
 
 const colorScale = d3.scaleOrdinal()
   .domain(["Other source", "Saint Raphael Academy Trip to Europe", "Biogen", "Unknown", "Berkshire Medical Center"])
@@ -85,8 +93,11 @@ csv('assets/cases_in_NewEngland.csv', (err, dataset) => {
   initialData.forEach(function(d){
     d.infection_type = d.infection_type.replace('Imported', 'Other source');
   });
+
+  createStatePacks(Array.from(initialData));
+
   // initial state
-  drawPlot(processData(initialData));
+  // drawPlot(processData(initialData));
 
   //   // Slider
   //   var sliderData = dataset.map(function (d) {
@@ -168,6 +179,157 @@ csv('assets/cases_in_NewEngland.csv', (err, dataset) => {
   //     updateData(currentValue, dataset);
   //   }
 });
+
+function applySimulation(nodes) {
+  const groupingForce = forceInABox()
+  .strength(0.2) // Strength to foci
+  .template('force') // Either treemap or force
+  // .groupBy('infection_type') // Node attribute to group
+  .size([width, height]);
+
+  const s = d3.forceSimulation(nodes)
+    .force("cx", d3.forceX().x(d => width / 2).strength(0.02))
+    .force("cy", d3.forceY().y(d => height / 2).strength(0.02))
+    .force("x", d3.forceX().x(d => d.x).strength(0.3))
+    .force("y", d3.forceY().y(d => d.y).strength(0.3))
+    .force("charge", d3.forceManyBody().strength(-1))
+    .force("collide", d3.forceCollide().radius(d => d.r + 10).strength(1))
+    // .force('group', groupingForce)
+    .stop()
+
+  while (s.alpha() > 0.01) {
+    s.tick();
+  }
+}
+
+const pack = data => {
+  const root = d3.hierarchy(data);
+  root.sum(d => d.children ? 0 : isNaN(d.value) ? 1 : d.value);
+
+  return d3.pack()
+      .size([width - 2, height - 2])
+      .padding(3)
+    (root);
+}
+
+function createStatePacks(data) {
+  console.log(group(data, d => d.location, d => d.infection_type))
+
+  const chartData = {
+    name: 'New England',
+    value: undefined,
+  };
+
+  chartData.children = [];
+
+
+  const byState = group(data, d => d.location, d => d.infection_type);
+  const statesPacked = new Map();
+  for (let [k, v] of byState) {
+    const s = {
+      name: k,
+      children: [],
+    };
+
+    for (let [src, val] of v) {
+      s.children.push({
+        name: src,
+        value: val.length,
+      });
+    }
+
+    chartData.children.push(s);
+
+    // v = v.map(d => ({ data: d, r: 3, infection_type: d.infection_type })); // step 1
+    // const nodes = d3.packSiblings(v) // step 1
+    // const { r } = d3.packEnclose(nodes) // step 2
+    // statesPacked.set(k, { nodes, r, }); // step 4
+  }
+
+  console.log(chartData);
+
+  const r = pack(chartData);
+
+  console.log(r);
+
+  const circle = d3.arc()
+      .innerRadius(0)
+      .outerRadius(d => d)
+      .startAngle(-Math.PI)
+      .endAngle(Math.PI);
+
+  const node = svg.selectAll("g")
+    .data(r.descendants().slice(1).reverse())
+    .enter().append("g")
+      .attr("transform", d => `translate(${d.x + 1},${d.y + 1})`);
+
+  node.append("path")
+      .attr("id", d => d)
+      .attr("d", d => circle(d.r));
+
+  const internal = node.filter(d => d.children);
+
+  internal.select("path")
+    .attr("stroke", '#000')
+    .attr("fill", "none");
+
+  const leaf = node.filter(d => !d.children)
+      .attr("fill", d => colorScale(d.data.name));
+
+  // leaf.append("text")
+  //     .each(d => {
+  //       const {lines, radius} = fit(d.data.name, isNaN(d.data.value) ? undefined : format(d.data.value));
+  //       d.lines = lines;
+  //       if (!isNaN(d.data.value)) d.lines[d.lines.length - 1].value = true;
+  //     })
+  //     .attr("fill", d => d3.lab(d.data.color).l < 60 ? lightColor : darkColor)
+  //   .selectAll("tspan")
+  //   .data(d => d.lines)
+  //   .enter().append("tspan")
+  //     .attr("x", 0)
+  //     .attr("y", (d, i, data) => (i - data.length / 2 + 0.8) * 11)
+  //     .text(d => d.text)
+  //   .filter(d => d.value)
+  //     .attr("font-weight", 300)
+  //     .attr("fill-opacity", 0.5);
+
+  // let values = [...new Map(statesPacked).values()];
+  // values = applySimulation(values);
+
+  // svg.select(".state-boundaries")
+  //   .attr("stroke", "#fff");
+
+  // console.log(statesPacked);
+
+  // const packs = svg
+  //   .append("g")
+  //   .classed("state-packs", true)
+  //   .selectAll(".state-pack")
+  //   .data(values)
+  //   .enter()
+  //   .append("g")
+  //   .classed("state-pack", true)
+  //   .attr("transform", d => `translate(${d.x}, ${d.y})`);
+
+  // packs
+  //   .append("circle")
+  //   .attr("r", d => d.r)
+  //   .attr("fill", "#e2e2e2")
+  //   .attr("stroke", "#333");
+
+  // const counties = packs
+  //   .selectAll(".county-centroid")
+  //   .data(d => d.nodes)
+  //   .enter()
+  //   .append("circle")
+  //   .classed("county-centroid", true)
+  //   .attr("r", d => d.r)
+  //   .attr("cx", d => d.x)
+  //   .attr("cy", d => d.y)
+  //   .attr("fill", d => colorScale(d.data.infection_type))
+
+  return statesPacked;
+}
 
 function updateData(value, data) {
   var filteredData;
@@ -292,39 +454,6 @@ function drawNodes(data) {
   d3.selectAll(".nodeCircle")
     .on("mouseover", function (d) {
       const mouseCoords = d3.mouse(this);
-      const cx = mouseCoords[0] + 20;
-      const cy = mouseCoords[1] - 120;
-      const details = d.details.length ? `Details: ${d.details}` : '';
-      const description = `
-        Location: ${d.location}<br>
-        Case type: ${d.caseType.charAt(0).toUpperCase() + d.caseType.slice(1)}<br>
-        Date: ${d.date}<br>
-        ${details}
-      `;
-
-      tooltip.style("visibility", "visible")
-        .html(description)
-        .style("left", `${cx}px`)
-        .style("top", mouseCoords[1] - tooltip.node().getBoundingClientRect().height - 20 + "px")
-
-      d3.selectAll(".nodeCircle").attr("opacity", 0.2);
-
-      d3.select(this)
-        .attr("opacity", 1)
-        .classed('highlight', true);
-    })
-    .on("mouseout", function () {
-      tooltip.style("visibility", "hidden");
-      d3.selectAll(".nodeCircle")
-        .attr("opacity", 1)
-        .classed('highlight', false);
-    });
-
-    d3.selectAll(".nodeLabel")
-      .on("mouseover", function (d) {
-        const mouseCoords = d3.mouse(this);
-        const cx = mouseCoords[0] + 20;
-        const cy = mouseCoords[1] - 120;
         const details = d.details.length ? `Details: ${d.details}` : '';
         const description = `
           Location: ${d.location}<br>
@@ -335,22 +464,67 @@ function drawNodes(data) {
 
         tooltip.style("visibility", "visible")
           .html(description)
+
+        const cy = mouseCoords[1] > height / 4 ?
+                   mouseCoords[1] - tooltip.node().getBoundingClientRect().height - 20 :
+                   mouseCoords[1] + 20;
+        const cx = mouseCoords[0] < width / 2 ?
+                   mouseCoords[0] + 20 :
+                   mouseCoords[0] - tooltip.node().getBoundingClientRect().width;
+
+        tooltip
           .style("left", `${cx}px`)
-          .style("top", mouseCoords[1] - tooltip.node().getBoundingClientRect().height - 20 + "px")
+          .style("top", `${cy}px`);
 
         d3.selectAll(".nodeCircle").attr("opacity", 0.2);
 
-         d3.select(this.parentNode)
+        d3.select(this)
+          .attr("opacity", 1)
+          .classed('highlight', true);
+    })
+    .on("mouseout", mouseOut);
+
+    d3.selectAll(".nodeLabel")
+      .on("mouseover", function (d) {
+        const mouseCoords = d3.mouse(this);
+        const details = d.details.length ? `Details: ${d.details}` : '';
+        const description = `
+          Location: ${d.location}<br>
+          Case type: ${d.caseType.charAt(0).toUpperCase() + d.caseType.slice(1)}<br>
+          Date: ${d.date}<br>
+          ${details}
+        `;
+
+        tooltip.style("visibility", "visible")
+          .html(description)
+
+        const cy = mouseCoords[1] > height / 4 ?
+                   mouseCoords[1] - tooltip.node().getBoundingClientRect().height - 20 :
+                   mouseCoords[1] + 20;
+        const cx = mouseCoords[0] < width / 2 ?
+                   mouseCoords[0] + 20 :
+                   mouseCoords[0] - tooltip.node().getBoundingClientRect().width;
+
+
+        tooltip
+          .style("left", `${cx}px`)
+          .style("top", `${cy}px`);
+
+        d3.selectAll(".nodeCircle").attr("opacity", 0.2);
+
+        d3.select(this.parentNode)
           .select('.nodeCircle')
           .attr("opacity", 1)
           .classed('highlight', true);
       })
-      .on("mouseout", function () {
-        tooltip.style("visibility", "hidden");
-        d3.selectAll(".nodeCircle")
-          .attr("opacity", 1)
-          .classed('highlight', false);
-      });
+      .on("mouseout", mouseOut);
+}
+
+function mouseOut() {
+  tooltip.style("visibility", "hidden");
+  d3.selectAll(".nodeCircle")
+    .attr("opacity", 1)
+    .classed('highlight', false);
 }
 
 function resize() {

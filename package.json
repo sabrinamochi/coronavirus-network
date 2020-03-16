@@ -48,6 +48,7 @@
   },
   "dependencies": {
     "ap-style-date": "^0.5.7",
+    "d3-array": "^2.4.0",
     "d3-request": "^1.0.6",
     "force-in-a-box": "0.0.10",
     "googleapis": "^47.0.0",
