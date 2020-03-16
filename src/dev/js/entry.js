@@ -231,7 +231,6 @@ function processData(data) {
 
     }
   });
-  console.log(nodes);
   return nodes;
 }
 
@@ -320,13 +319,43 @@ function drawNodes(data) {
         .attr("opacity", 1)
         .classed('highlight', false);
     });
+
+    d3.selectAll(".nodeLabel")
+      .on("mouseover", function (d) {
+        const mouseCoords = d3.mouse(this);
+        const cx = mouseCoords[0] + 20;
+        const cy = mouseCoords[1] - 120;
+        const details = d.details.length ? `Details: ${d.details}` : '';
+        const description = `
+          Location: ${d.location}<br>
+          Case type: ${d.caseType.charAt(0).toUpperCase() + d.caseType.slice(1)}<br>
+          Date: ${d.date}<br>
+          ${details}
+        `;
+
+        tooltip.style("visibility", "visible")
+          .html(description)
+          .style("left", `${cx}px`)
+          .style("top", mouseCoords[1] - tooltip.node().getBoundingClientRect().height - 20 + "px")
+
+        d3.selectAll(".nodeCircle").attr("opacity", 0.2);
+
+         d3.select(this.parentNode)
+          .select('.nodeCircle')
+          .attr("opacity", 1)
+          .classed('highlight', true);
+      })
+      .on("mouseout", function () {
+        tooltip.style("visibility", "hidden");
+        d3.selectAll(".nodeCircle")
+          .attr("opacity", 1)
+          .classed('highlight', false);
+      });
 }
 
 function resize() {
   const newWidth = chartDiv.node().getBoundingClientRect().width;
   const newHeight = chartDiv.node().getBoundingClientRect().height;
-
-  console.log(newWidth, newHeight)
 
   svg.attr('width', newWidth)
     .attr('height', newHeight)
