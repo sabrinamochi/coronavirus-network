@@ -5,8 +5,8 @@ index,case_abbr,infection_type,infected_from,status,location,location_num,case_t
 4,NH,Imported,,self-quarantine,New Hampshire,1,presumptive,Male,Unknown,A hospital employee who recently traveled to Italy was the first person in N.H. to test positive.,3/2/2020,https://www.dhhs.nh.gov/media/pr/2020/03022020-first-positive-covid-case-announced.htm
 5,MA,Saint Raphael Academy Trip to Europe,Saint Raphael Academy Trip to Europe,self-quarantine,Massachusetts,0,presumptive,Female,20s,A teacher at Saint Raphael Academy who traveled with the school to Italy. ,3/2/2020,https://www.mass.gov/news/first-presumptive-positive-case-of-covid-19-identified-by-massachusetts-state-public-health
 6,NH,Imported,7,self-quarantine,New Hampshire,1,presumptive,Male,Unknown,This individual was in close contact with the first person in N.H. to test positive.,3/3/2020,https://www.dhhs.nh.gov/media/pr/2020/03032020-second-positive-covid-19.htm
-8,MA,Imported,,self-quarantine,Massachusetts,0,presumptive,Female,60s,"The woman, who’s in her 60s had recently traveled to Europe, including northern Italy. ",3/5/2020,https://www.mass.gov/news/second-presumptive-positive-case-of-covid-19-identified-by-massachusetts-state-public-health
-9,MA,Biogen,Biogen,self-quarantine,Massachusetts,0,presumptive,Female,40s,This case was part of the outbreak that stemmed from a meeting conducted by the Cambridge-biotech company Biogen. ,3/6/2020,https://www.mass.gov/news/five-new-presumptive-positive-cases-of-covid-19-identified-by-massachusetts-state-public
+7,MA,Imported,,self-quarantine,Massachusetts,0,presumptive,Female,60s,"The woman, who’s in her 60s had recently traveled to Europe, including northern Italy. ",3/5/2020,https://www.mass.gov/news/second-presumptive-positive-case-of-covid-19-identified-by-massachusetts-state-public-health
+8,MA,Biogen,Biogen,self-quarantine,Massachusetts,0,presumptive,Female,40s,This case was part of the outbreak that stemmed from a meeting conducted by the Cambridge-biotech company Biogen. ,3/6/2020,https://www.mass.gov/news/five-new-presumptive-positive-cases-of-covid-19-identified-by-massachusetts-state-public
 10,MA,Biogen,Biogen,self-quarantine,Massachusetts,0,presumptive,Female,40s,This case was part of the outbreak that stemmed from a meeting conducted by the Cambridge-biotech company Biogen.,3/6/2020,https://www.mass.gov/news/five-new-presumptive-positive-cases-of-covid-19-identified-by-massachusetts-state-public
 11,MA,Biogen,Biogen,self-quarantine,Massachusetts,0,presumptive,Male,40s,This case was part of the outbreak that stemmed from a meeting conducted by the Cambridge-biotech company Biogen.,3/6/2020,https://www.mass.gov/news/five-new-presumptive-positive-cases-of-covid-19-identified-by-massachusetts-state-public
 12,MA,Biogen,Biogen,self-quarantine,Massachusetts,0,presumptive,Female,30s,This case was part of the outbreak that stemmed from a meeting conducted by the Cambridge-biotech company Biogen.,3/6/2020,https://www.mass.gov/news/five-new-presumptive-positive-cases-of-covid-19-identified-by-massachusetts-state-public
@@ -221,7 +221,7 @@ index,case_abbr,infection_type,infected_from,status,location,location_num,case_t
 222,RI,Unknown,,unknown,Rhode Island,,unknown,Unknown,Unknown,Unknown,3/14/2020,https://www.bostonglobe.com/2020/03/14/metro/ri-coronavirus-cases-rise-20-governor-urges-people-stay-home/
 224,ME,Unknown,,unknown,Maine,,unknown,Female,30s,A woman in her 30s who works in health care industry,3/15/2020,https://www.pressherald.com/2020/03/15/maine-now-has-seven-confirmed-five-presumptive-cases-of-coronavirus/
 225,ME,Unknown,,Unknown,Maine,,unknown,Female,70s,Woman in her 70s,3/15/2020,https://www.pressherald.com/2020/03/15/maine-now-has-seven-confirmed-five-presumptive-cases-of-coronavirus/
-226,ME,Unknown,,Unknown,Maine,,unknown,Unknown,under 18,A Cumberland County person who is under age 18.,3/15/2020,https://www.pressherald.com/2020/03/15/maine-now-has-seven-confirmed-five-presumptive-cases-of-coronavirus/
+226,ME,Unknown,,Unknown,Maine,,unknown,Unknown,under 18,"A 12 year old who could be a sign of community spread, according to the Portland PRess Herald.",3/15/2020,https://www.pressherald.com/2020/03/15/maine-now-has-seven-confirmed-five-presumptive-cases-of-coronavirus/
 227,ME,Unknown,,Unknown,Maine,,unknown,Unknown,,A resident of a retirement community.,3/15/2020,https://www.pressherald.com/2020/03/15/maine-now-has-seven-confirmed-five-presumptive-cases-of-coronavirus/
 228,ME,Unknown,,Unknown,Maine,,unknown,Male,40s,A man in his 40s,3/15/2020,https://www.pressherald.com/2020/03/15/maine-now-has-seven-confirmed-five-presumptive-cases-of-coronavirus/
 229,ME,Unknown,,Unknown,Maine,,unknown,Female,40s,Woman in her 40s. Another person in her houeshold tested positive,3/14/2020,https://www.pressherald.com/2020/03/14/maine-cdc-announces-three-new-likely-coronavirus-cases/
@@ -241,37 +241,66 @@ index,case_abbr,infection_type,infected_from,status,location,location_num,case_t
 241,NH,unknown,,unknown,New Hampshire,,unknown,female,unknown,unknown,3/15/2020,https://www.nh.gov/covid19/press-releases/documents/covid-19-update-03152020.pdf
 242,NH,unknown,,unknown,New Hampshire,,unknown,male,unknown,unknown,3/15/2020,https://www.nh.gov/covid19/press-releases/documents/covid-19-update-03152020.pdf
 243,NH,unknown,,unknown,New Hampshire,,unknown,male,unknown,unknown,3/15/2020,https://www.nh.gov/covid19/press-releases/documents/covid-19-update-03152020.pdf
-201,MA,Unknown,,Unknown,Massachusetts,0,Unknown,Unknown,Unknown,Unknown,3/16/2020,https://www.mass.gov/files/documents/2020/03/16/covid-19-case-report-3-16-2020.pdf
-201,MA,Unknown,,Unknown,Massachusetts,0,Unknown,Unknown,Unknown,Unknown,3/16/2020,https://www.mass.gov/files/documents/2020/03/16/covid-19-case-report-3-16-2020.pdf
-201,MA,Unknown,,Unknown,Massachusetts,0,Unknown,Unknown,Unknown,Unknown,3/16/2020,https://www.mass.gov/files/documents/2020/03/16/covid-19-case-report-3-16-2020.pdf
-201,MA,Unknown,,Unknown,Massachusetts,0,Unknown,Unknown,Unknown,Unknown,3/16/2020,https://www.mass.gov/files/documents/2020/03/16/covid-19-case-report-3-16-2020.pdf
-201,MA,Unknown,,Unknown,Massachusetts,0,Unknown,Unknown,Unknown,Unknown,3/16/2020,https://www.mass.gov/files/documents/2020/03/16/covid-19-case-report-3-16-2020.pdf
-201,MA,Unknown,,Unknown,Massachusetts,0,Unknown,Unknown,Unknown,Unknown,3/16/2020,https://www.mass.gov/files/documents/2020/03/16/covid-19-case-report-3-16-2020.pdf
-201,MA,Unknown,,Unknown,Massachusetts,0,Unknown,Unknown,Unknown,Unknown,3/16/2020,https://www.mass.gov/files/documents/2020/03/16/covid-19-case-report-3-16-2020.pdf
-201,MA,Unknown,,Unknown,Massachusetts,0,Unknown,Unknown,Unknown,Unknown,3/16/2020,https://www.mass.gov/files/documents/2020/03/16/covid-19-case-report-3-16-2020.pdf
-201,MA,Unknown,,Unknown,Massachusetts,0,Unknown,Unknown,Unknown,Unknown,3/16/2020,https://www.mass.gov/files/documents/2020/03/16/covid-19-case-report-3-16-2020.pdf
-201,MA,Unknown,,Unknown,Massachusetts,0,Unknown,Unknown,Unknown,Unknown,3/16/2020,https://www.mass.gov/files/documents/2020/03/16/covid-19-case-report-3-16-2020.pdf
-201,MA,Unknown,,Unknown,Massachusetts,0,Unknown,Unknown,Unknown,Unknown,3/16/2020,https://www.mass.gov/files/documents/2020/03/16/covid-19-case-report-3-16-2020.pdf
-201,MA,Unknown,,Unknown,Massachusetts,0,Unknown,Unknown,Unknown,Unknown,3/16/2020,https://www.mass.gov/files/documents/2020/03/16/covid-19-case-report-3-16-2020.pdf
-201,MA,Unknown,,Unknown,Massachusetts,0,Unknown,Unknown,Unknown,Unknown,3/16/2020,https://www.mass.gov/files/documents/2020/03/16/covid-19-case-report-3-16-2020.pdf
-201,MA,Unknown,,Unknown,Massachusetts,0,Unknown,Unknown,Unknown,Unknown,3/16/2020,https://www.mass.gov/files/documents/2020/03/16/covid-19-case-report-3-16-2020.pdf
-201,MA,Unknown,,Unknown,Massachusetts,0,Unknown,Unknown,Unknown,Unknown,3/16/2020,https://www.mass.gov/files/documents/2020/03/16/covid-19-case-report-3-16-2020.pdf
-201,MA,Unknown,,Unknown,Massachusetts,0,Unknown,Unknown,Unknown,Unknown,3/16/2020,https://www.mass.gov/files/documents/2020/03/16/covid-19-case-report-3-16-2020.pdf
-201,MA,Unknown,,Unknown,Massachusetts,0,Unknown,Unknown,Unknown,Unknown,3/16/2020,https://www.mass.gov/files/documents/2020/03/16/covid-19-case-report-3-16-2020.pdf
-201,MA,Unknown,,Unknown,Massachusetts,0,Unknown,Unknown,Unknown,Unknown,3/16/2020,https://www.mass.gov/files/documents/2020/03/16/covid-19-case-report-3-16-2020.pdf
-201,MA,Unknown,,Unknown,Massachusetts,0,Unknown,Unknown,Unknown,Unknown,3/16/2020,https://www.mass.gov/files/documents/2020/03/16/covid-19-case-report-3-16-2020.pdf
-201,MA,Unknown,,Unknown,Massachusetts,0,Unknown,Unknown,Unknown,Unknown,3/16/2020,https://www.mass.gov/files/documents/2020/03/16/covid-19-case-report-3-16-2020.pdf
-201,MA,Unknown,,Unknown,Massachusetts,0,Unknown,Unknown,Unknown,Unknown,3/16/2020,https://www.mass.gov/files/documents/2020/03/16/covid-19-case-report-3-16-2020.pdf
-201,MA,Unknown,,Unknown,Massachusetts,0,Unknown,Unknown,Unknown,Unknown,3/16/2020,https://www.mass.gov/files/documents/2020/03/16/covid-19-case-report-3-16-2020.pdf
-201,MA,Unknown,,Unknown,Massachusetts,0,Unknown,Unknown,Unknown,Unknown,3/16/2020,https://www.mass.gov/files/documents/2020/03/16/covid-19-case-report-3-16-2020.pdf
-201,MA,Unknown,,Unknown,Massachusetts,0,Unknown,Unknown,Unknown,Unknown,3/16/2020,https://www.mass.gov/files/documents/2020/03/16/covid-19-case-report-3-16-2020.pdf
-201,MA,Unknown,,Unknown,Massachusetts,0,Unknown,Unknown,Unknown,Unknown,3/16/2020,https://www.mass.gov/files/documents/2020/03/16/covid-19-case-report-3-16-2020.pdf
-201,MA,Unknown,,Unknown,Massachusetts,0,Unknown,Unknown,Unknown,Unknown,3/16/2020,https://www.mass.gov/files/documents/2020/03/16/covid-19-case-report-3-16-2020.pdf
-201,MA,Unknown,,Unknown,Massachusetts,0,Unknown,Unknown,Unknown,Unknown,3/16/2020,https://www.mass.gov/files/documents/2020/03/16/covid-19-case-report-3-16-2020.pdf
-201,MA,Unknown,,Unknown,Massachusetts,0,Unknown,Unknown,Unknown,Unknown,3/16/2020,https://www.mass.gov/files/documents/2020/03/16/covid-19-case-report-3-16-2020.pdf
-201,MA,Unknown,,Unknown,Massachusetts,0,Unknown,Unknown,Unknown,Unknown,3/16/2020,https://www.mass.gov/files/documents/2020/03/16/covid-19-case-report-3-16-2020.pdf
-201,MA,Unknown,,Unknown,Massachusetts,0,Unknown,Unknown,Unknown,Unknown,3/16/2020,https://www.mass.gov/files/documents/2020/03/16/covid-19-case-report-3-16-2020.pdf
-201,MA,Unknown,,Unknown,Massachusetts,0,Unknown,Unknown,Unknown,Unknown,3/16/2020,https://www.mass.gov/files/documents/2020/03/16/covid-19-case-report-3-16-2020.pdf
-201,MA,Unknown,,Unknown,Massachusetts,0,Unknown,Unknown,Unknown,Unknown,3/16/2020,https://www.mass.gov/files/documents/2020/03/16/covid-19-case-report-3-16-2020.pdf
-201,MA,Unknown,,Unknown,Massachusetts,0,Unknown,Unknown,Unknown,Unknown,3/16/2020,https://www.mass.gov/files/documents/2020/03/16/covid-19-case-report-3-16-2020.pdf
-201,MA,Unknown,,Unknown,Massachusetts,0,Unknown,Unknown,Unknown,Unknown,3/16/2020,https://www.mass.gov/files/documents/2020/03/16/covid-19-case-report-3-16-2020.pdf
+244,MA,Unknown,,Unknown,Massachusetts,0,Unknown,Unknown,Unknown,Unknown,3/16/2020,https://www.mass.gov/files/documents/2020/03/16/covid-19-case-report-3-16-2020.pdf
+245,MA,Unknown,,Unknown,Massachusetts,0,Unknown,Unknown,Unknown,Unknown,3/16/2020,https://www.mass.gov/files/documents/2020/03/16/covid-19-case-report-3-16-2020.pdf
+246,MA,Unknown,,Unknown,Massachusetts,0,Unknown,Unknown,Unknown,Unknown,3/16/2020,https://www.mass.gov/files/documents/2020/03/16/covid-19-case-report-3-16-2020.pdf
+247,MA,Unknown,,Unknown,Massachusetts,0,Unknown,Unknown,Unknown,Unknown,3/16/2020,https://www.mass.gov/files/documents/2020/03/16/covid-19-case-report-3-16-2020.pdf
+248,MA,Unknown,,Unknown,Massachusetts,0,Unknown,Unknown,Unknown,Unknown,3/16/2020,https://www.mass.gov/files/documents/2020/03/16/covid-19-case-report-3-16-2020.pdf
+248,MA,Unknown,,Unknown,Massachusetts,0,Unknown,Unknown,Unknown,Unknown,3/16/2020,https://www.mass.gov/files/documents/2020/03/16/covid-19-case-report-3-16-2020.pdf
+250,MA,Unknown,,Unknown,Massachusetts,0,Unknown,Unknown,Unknown,Unknown,3/16/2020,https://www.mass.gov/files/documents/2020/03/16/covid-19-case-report-3-16-2020.pdf
+251,MA,Unknown,,Unknown,Massachusetts,0,Unknown,Unknown,Unknown,Unknown,3/16/2020,https://www.mass.gov/files/documents/2020/03/16/covid-19-case-report-3-16-2020.pdf
+252,MA,Unknown,,Unknown,Massachusetts,0,Unknown,Unknown,Unknown,Unknown,3/16/2020,https://www.mass.gov/files/documents/2020/03/16/covid-19-case-report-3-16-2020.pdf
+253,MA,Unknown,,Unknown,Massachusetts,0,Unknown,Unknown,Unknown,Unknown,3/16/2020,https://www.mass.gov/files/documents/2020/03/16/covid-19-case-report-3-16-2020.pdf
+254,MA,Unknown,,Unknown,Massachusetts,0,Unknown,Unknown,Unknown,Unknown,3/16/2020,https://www.mass.gov/files/documents/2020/03/16/covid-19-case-report-3-16-2020.pdf
+255,MA,Unknown,,Unknown,Massachusetts,0,Unknown,Unknown,Unknown,Unknown,3/16/2020,https://www.mass.gov/files/documents/2020/03/16/covid-19-case-report-3-16-2020.pdf
+256,MA,Unknown,,Unknown,Massachusetts,0,Unknown,Unknown,Unknown,Unknown,3/16/2020,https://www.mass.gov/files/documents/2020/03/16/covid-19-case-report-3-16-2020.pdf
+257,MA,Unknown,,Unknown,Massachusetts,0,Unknown,Unknown,Unknown,Unknown,3/16/2020,https://www.mass.gov/files/documents/2020/03/16/covid-19-case-report-3-16-2020.pdf
+258,MA,Unknown,,Unknown,Massachusetts,0,Unknown,Unknown,Unknown,Unknown,3/16/2020,https://www.mass.gov/files/documents/2020/03/16/covid-19-case-report-3-16-2020.pdf
+259,MA,Unknown,,Unknown,Massachusetts,0,Unknown,Unknown,Unknown,Unknown,3/16/2020,https://www.mass.gov/files/documents/2020/03/16/covid-19-case-report-3-16-2020.pdf
+260,MA,Unknown,,Unknown,Massachusetts,0,Unknown,Unknown,Unknown,Unknown,3/16/2020,https://www.mass.gov/files/documents/2020/03/16/covid-19-case-report-3-16-2020.pdf
+261,MA,Unknown,,Unknown,Massachusetts,0,Unknown,Unknown,Unknown,Unknown,3/16/2020,https://www.mass.gov/files/documents/2020/03/16/covid-19-case-report-3-16-2020.pdf
+262,MA,Unknown,,Unknown,Massachusetts,0,Unknown,Unknown,Unknown,Unknown,3/16/2020,https://www.mass.gov/files/documents/2020/03/16/covid-19-case-report-3-16-2020.pdf
+263,MA,Unknown,,Unknown,Massachusetts,0,Unknown,Unknown,Unknown,Unknown,3/16/2020,https://www.mass.gov/files/documents/2020/03/16/covid-19-case-report-3-16-2020.pdf
+264,MA,Unknown,,Unknown,Massachusetts,0,Unknown,Unknown,Unknown,Unknown,3/16/2020,https://www.mass.gov/files/documents/2020/03/16/covid-19-case-report-3-16-2020.pdf
+265,MA,Unknown,,Unknown,Massachusetts,0,Unknown,Unknown,Unknown,Unknown,3/16/2020,https://www.mass.gov/files/documents/2020/03/16/covid-19-case-report-3-16-2020.pdf
+266,MA,Unknown,,Unknown,Massachusetts,0,Unknown,Unknown,Unknown,Unknown,3/16/2020,https://www.mass.gov/files/documents/2020/03/16/covid-19-case-report-3-16-2020.pdf
+267,MA,Unknown,,Unknown,Massachusetts,0,Unknown,Unknown,Unknown,Unknown,3/16/2020,https://www.mass.gov/files/documents/2020/03/16/covid-19-case-report-3-16-2020.pdf
+268,MA,Unknown,,Unknown,Massachusetts,0,Unknown,Unknown,Unknown,Unknown,3/16/2020,https://www.mass.gov/files/documents/2020/03/16/covid-19-case-report-3-16-2020.pdf
+269,MA,Unknown,,Unknown,Massachusetts,0,Unknown,Unknown,Unknown,Unknown,3/16/2020,https://www.mass.gov/files/documents/2020/03/16/covid-19-case-report-3-16-2020.pdf
+270,MA,Unknown,,Unknown,Massachusetts,0,Unknown,Unknown,Unknown,Unknown,3/16/2020,https://www.mass.gov/files/documents/2020/03/16/covid-19-case-report-3-16-2020.pdf
+271,MA,Unknown,,Unknown,Massachusetts,0,Unknown,Unknown,Unknown,Unknown,3/16/2020,https://www.mass.gov/files/documents/2020/03/16/covid-19-case-report-3-16-2020.pdf
+272,MA,Unknown,,Unknown,Massachusetts,0,Unknown,Unknown,Unknown,Unknown,3/16/2020,https://www.mass.gov/files/documents/2020/03/16/covid-19-case-report-3-16-2020.pdf
+273,MA,Unknown,,Unknown,Massachusetts,0,Unknown,Unknown,Unknown,Unknown,3/16/2020,https://www.mass.gov/files/documents/2020/03/16/covid-19-case-report-3-16-2020.pdf
+274,MA,Unknown,,Unknown,Massachusetts,0,Unknown,Unknown,Unknown,Unknown,3/16/2020,https://www.mass.gov/files/documents/2020/03/16/covid-19-case-report-3-16-2020.pdf
+275,MA,Unknown,,Unknown,Massachusetts,0,Unknown,Unknown,Unknown,Unknown,3/16/2020,https://www.mass.gov/files/documents/2020/03/16/covid-19-case-report-3-16-2020.pdf
+276,MA,Unknown,,Unknown,Massachusetts,0,Unknown,Unknown,Unknown,Unknown,3/16/2020,https://www.mass.gov/files/documents/2020/03/16/covid-19-case-report-3-16-2020.pdf
+277,MA,Unknown,,Unknown,Massachusetts,0,Unknown,Unknown,Unknown,Unknown,3/16/2020,https://www.mass.gov/files/documents/2020/03/16/covid-19-case-report-3-16-2020.pdf
+278,CT,Unknown,,unknown,Connecticut,,unknown,unknown,unknown,unknown,3/16/2020,https://portal.ct.gov/coronavirus
+279,CT,Unknown,,unknown,Connecticut,,unknown,unknown,unknown,unknown,3/16/2020,https://portal.ct.gov/coronavirus
+280,CT,Unknown,,unknown,Connecticut,,unknown,unknown,unknown,unknown,3/16/2020,https://portal.ct.gov/coronavirus
+281,CT,Unknown,,unknown,Connecticut,,unknown,unknown,unknown,unknown,3/16/2020,https://portal.ct.gov/coronavirus
+282,CT,Unknown,,unknown,Connecticut,,unknown,unknown,unknown,unknown,3/16/2020,https://portal.ct.gov/coronavirus
+283,CT,Unknown,,unknown,Connecticut,,unknown,unknown,unknown,unknown,3/16/2020,https://portal.ct.gov/coronavirus
+284,CT,Unknown,,unknown,Connecticut,,unknown,unknown,unknown,unknown,3/16/2020,https://portal.ct.gov/coronavirus
+285,CT,Unknown,,unknown,Connecticut,,unknown,unknown,unknown,unknown,3/16/2020,https://portal.ct.gov/coronavirus
+286,CT,Unknown,,unknown,Connecticut,,unknown,unknown,unknown,unknown,3/16/2020,https://portal.ct.gov/coronavirus
+287,CT,Unknown,,unknown,Connecticut,,unknown,unknown,unknown,unknown,3/16/2020,https://portal.ct.gov/coronavirus
+288,CT,Unknown,,unknown,Connecticut,,unknown,unknown,unknown,unknown,3/16/2020,https://portal.ct.gov/coronavirus
+289,CT,Unknown,,unknown,Connecticut,,unknown,unknown,unknown,unknown,3/16/2020,https://portal.ct.gov/coronavirus
+290,CT,Unknown,,unknown,Connecticut,,unknown,unknown,unknown,unknown,3/16/2020,https://portal.ct.gov/coronavirus
+291,CT,Unknown,,unknown,Connecticut,,unknown,unknown,unknown,unknown,3/16/2020,https://portal.ct.gov/coronavirus
+292,CT,Unknown,,unknown,Connecticut,,unknown,unknown,unknown,unknown,3/16/2020,https://portal.ct.gov/coronavirus
+293,RI,unknown,,unknown,Rhode Island,,unknown,unknown,female,A woman in her 40s.,3/16/2020,https://www.wpri.com/health/coronavirus/raimondo-briefing-on-coronavirus-expected-to-start-at-10-a-m/
+294,ME,unknown,,unknown,Maine,,unknown,unknown,male,A man in his 30s.,3/16/2020,https://www.maine.gov/dhhs/mecdc/infectious-disease/epi/airborne/coronavirus.shtml
+295,ME,unknown,,unknown,Maine,,unknown,unknown,male,A man in his 40s,3/16/2020,https://www.maine.gov/dhhs/mecdc/infectious-disease/epi/airborne/coronavirus.shtml
+296,ME,unknown,,unknown,Maine,,unknown,unknown,male,A man in his 70s.,3/16/2020,https://www.maine.gov/dhhs/mecdc/infectious-disease/epi/airborne/coronavirus.shtml
+297,ME,unknown,,unknown,Maine,,unknown,unknown,female,A woman in her 60s.,3/16/2020,https://www.maine.gov/dhhs/mecdc/infectious-disease/epi/airborne/coronavirus.shtml
+298,ME,unknown,,unknown,Maine,,unknown,unknown,male,A man in his 70s.,3/16/2020,https://www.maine.gov/dhhs/mecdc/infectious-disease/epi/airborne/coronavirus.shtml
+299,VT,unknown,,unknown,Vermont,,unknown,unknown,female,"A woman in her 60s, who was being hospitalized.",3/16/2020,https://www.healthvermont.gov/media/newsroom/vermont-reports-additional-four-cases-new-coronavirus-covid-19
+300,VT,unknown,,unknown,Vermont,,unknown,unknown,male,A man in his 60s.,3/16/2020,https://www.healthvermont.gov/media/newsroom/vermont-reports-additional-four-cases-new-coronavirus-covid-19
+301,VT,unknown,,unknown,Vermont,,unknown,unknown,male,A man in his 30s.,3/16/2020,https://www.healthvermont.gov/media/newsroom/vermont-reports-additional-four-cases-new-coronavirus-covid-19
+302,VT,unknown,,unknown,Vermont,,unknown,unknown,female,A woman in her 30s,3/16/2020,https://www.healthvermont.gov/media/newsroom/vermont-reports-additional-four-cases-new-coronavirus-covid-19
+303,NH,unknown,,unknown,New Hampshire,,unknown,unknown,female,A female teen.,3/16/2020,https://www.unionleader.com/news/health/coronavirus/four-new-covid--cases-in-nh-identified-including-teen/article_77d1c57a-3442-5b2f-842b-954958e87d73.html
+304,NH,unknown,,unknown,New Hampshire,,unknown,unknown,male,"An adult male who recently traveled to Central America, according to the Union Leader",3/16/2020,https://www.unionleader.com/news/health/coronavirus/four-new-covid--cases-in-nh-identified-including-teen/article_77d1c57a-3442-5b2f-842b-954958e87d73.html
+305,NH,unknown,,unknown,New Hampshire,,unknown,unknown,male,An adult male.,3/16/2020,https://www.unionleader.com/news/health/coronavirus/four-new-covid--cases-in-nh-identified-including-teen/article_77d1c57a-3442-5b2f-842b-954958e87d73.html
+306,NH,unknown,,unknown,New Hampshire,,unknown,unknown,male,An adult male.,3/16/2020,https://www.unionleader.com/news/health/coronavirus/four-new-covid--cases-in-nh-identified-including-teen/article_77d1c57a-3442-5b2f-842b-954958e87d73.html

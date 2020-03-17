@@ -10,9 +10,24 @@ const svg = chartDiv
   .attr('viewBox', [0, 0, width, height]);
 
 const smallScreen = window.innerWidth < 500 ? true : false;
+const getRadius = () => {
+  if (window.innerWidth <= 500) return 9;
+  if (window.innerWidth > 500 & window.innerWidth < 768) {
+    return 11;
+  }
+  return 12;
+};
+
+const getCharge = () => {
+  if (window.innerWidth <= 500) return -40;
+  if (window.innerWidth > 500 & window.innerWidth < 768) {
+    return -100;
+  }
+  return -120;
+};
 
 // Chart
-const radius = smallScreen ? 9 : 13.5;
+const radius = getRadius();
 const circlePadding = 2;
 const nodeG = svg.append('g').attr('class', 'nodeG');
 var nodeParent = nodeG.selectAll('.circleGroup');
@@ -21,18 +36,18 @@ const yCenter = [height / 10, height * 3 / 8, height * 5 / 8, height * 7 / 8];
 
 const forceX = d3.forceX()
   .x(d => xCenter[d.xCluster])
-  .strength(0.25);
+  .strength(smallScreen ? 0.25 : 0.35);
 
 const forceY = d3.forceY()
   .y(d => yCenter[d.yCluster])
-  .strength(0.25);
+  .strength(smallScreen ? 0.25 : 0.35);
 
 const forceCollide = d3.forceCollide()
   .radius(radius + circlePadding)
-  // .strength(0.5)
+  // .strength(0.5);
 
 const charge = d3.forceManyBody()
-  .strength(smallScreen ? -40 : -120)
+  .strength(getCharge())
   .distanceMin(2 * radius)
 
 const center = d3.forceCenter()
@@ -292,39 +307,6 @@ function drawNodes(data) {
   d3.selectAll(".nodeCircle")
     .on("mouseover", function (d) {
       const mouseCoords = d3.mouse(this);
-      const cx = mouseCoords[0] + 20;
-      const cy = mouseCoords[1] - 120;
-      const details = d.details.length ? `Details: ${d.details}` : '';
-      const description = `
-        Location: ${d.location}<br>
-        Case type: ${d.caseType.charAt(0).toUpperCase() + d.caseType.slice(1)}<br>
-        Date: ${d.date}<br>
-        ${details}
-      `;
-
-      tooltip.style("visibility", "visible")
-        .html(description)
-        .style("left", `${cx}px`)
-        .style("top", mouseCoords[1] - tooltip.node().getBoundingClientRect().height - 20 + "px")
-
-      d3.selectAll(".nodeCircle").attr("opacity", 0.2);
-
-      d3.select(this)
-        .attr("opacity", 1)
-        .classed('highlight', true);
-    })
-    .on("mouseout", function () {
-      tooltip.style("visibility", "hidden");
-      d3.selectAll(".nodeCircle")
-        .attr("opacity", 1)
-        .classed('highlight', false);
-    });
-
-    d3.selectAll(".nodeLabel")
-      .on("mouseover", function (d) {
-        const mouseCoords = d3.mouse(this);
-        const cx = mouseCoords[0] + 20;
-        const cy = mouseCoords[1] - 120;
         const details = d.details.length ? `Details: ${d.details}` : '';
         const description = `
           Location: ${d.location}<br>
@@ -335,22 +317,67 @@ function drawNodes(data) {
 
         tooltip.style("visibility", "visible")
           .html(description)
+
+        const cy = mouseCoords[1] > height / 4 ?
+                   mouseCoords[1] - tooltip.node().getBoundingClientRect().height - 20 :
+                   mouseCoords[1] + 20;
+        const cx = mouseCoords[0] < width / 2 ?
+                   mouseCoords[0] + 20 :
+                   mouseCoords[0] - tooltip.node().getBoundingClientRect().width;
+
+        tooltip
           .style("left", `${cx}px`)
-          .style("top", mouseCoords[1] - tooltip.node().getBoundingClientRect().height - 20 + "px")
+          .style("top", `${cy}px`);
 
         d3.selectAll(".nodeCircle").attr("opacity", 0.2);
 
-         d3.select(this.parentNode)
+        d3.select(this)
+          .attr("opacity", 1)
+          .classed('highlight', true);
+    })
+    .on("mouseout", mouseOut);
+
+    d3.selectAll(".nodeLabel")
+      .on("mouseover", function (d) {
+        const mouseCoords = d3.mouse(this);
+        const details = d.details.length ? `Details: ${d.details}` : '';
+        const description = `
+          Location: ${d.location}<br>
+          Case type: ${d.caseType.charAt(0).toUpperCase() + d.caseType.slice(1)}<br>
+          Date: ${d.date}<br>
+          ${details}
+        `;
+
+        tooltip.style("visibility", "visible")
+          .html(description)
+
+        const cy = mouseCoords[1] > height / 4 ?
+                   mouseCoords[1] - tooltip.node().getBoundingClientRect().height - 20 :
+                   mouseCoords[1] + 20;
+        const cx = mouseCoords[0] < width / 2 ?
+                   mouseCoords[0] + 20 :
+                   mouseCoords[0] - tooltip.node().getBoundingClientRect().width;
+
+
+        tooltip
+          .style("left", `${cx}px`)
+          .style("top", `${cy}px`);
+
+        d3.selectAll(".nodeCircle").attr("opacity", 0.2);
+
+        d3.select(this.parentNode)
           .select('.nodeCircle')
           .attr("opacity", 1)
           .classed('highlight', true);
       })
-      .on("mouseout", function () {
-        tooltip.style("visibility", "hidden");
-        d3.selectAll(".nodeCircle")
-          .attr("opacity", 1)
-          .classed('highlight', false);
-      });
+      .on("mouseout", mouseOut);
+}
+
+function mouseOut() {
+  tooltip.style("visibility", "hidden");
+  d3.selectAll(".nodeCircle")
+    .attr("opacity", 1)
+    .classed('highlight', false);
 }
 
 function resize() {
