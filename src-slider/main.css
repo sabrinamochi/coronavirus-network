@@ -1,0 +1,263 @@
+@font-face {
+  font-family: 'Benton';
+  src: url("https://apps.bostonglobe.com/common/font/benton-bold.woff2") format('woff2'), url("https://apps.bostonglobe.com/common/font/benton-bold.woff") format('woff');
+  font-weight: 600;
+  font-style: normal;
+}
+.benton-bold {
+  font-family: 'Benton', Helvetica Neue, Helvetica, Arial, sans-serif;
+  font-weight: 600;
+  font-style: normal;
+}
+.loaded-benton-bold .benton-bold {
+  font-family: 'Benton', Helvetica Neue, Helvetica, Arial, sans-serif;
+  font-weight: 600;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'Benton';
+  src: url("https://apps.bostonglobe.com/common/font/benton-regular.woff2") format('woff2'), url("https://apps.bostonglobe.com/common/font/benton-regular.woff") format('woff');
+  font-weight: 400;
+  font-style: normal;
+}
+.benton-regular {
+  font-family: 'Benton', Helvetica Neue, Helvetica, Arial, sans-serif;
+  font-weight: 400;
+  font-style: normal;
+}
+.loaded-benton-regular .benton-regular {
+  font-family: 'Benton', Helvetica Neue, Helvetica, Arial, sans-serif;
+  font-weight: 400;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'BentonSansCond-Regular';
+  src: url("https://apps.bostonglobe.com/common/font/bentonsanscond-regular.woff2") format('woff2'), url("https://apps.bostonglobe.com/common/font/bentonsanscond-regular.woff") format('woff');
+  font-weight: 400;
+  font-style: normal;
+}
+.bentonsanscond-regular {
+  font-family: 'BentonSansCond-Regular', Impact, Arial Narrow, Helvetica, sans-serif;
+  font-weight: 400;
+  font-style: normal;
+}
+.loaded-bentonsanscond-regular .bentonsanscond-regular {
+  font-family: 'BentonSansCond-Regular', Impact, Arial Narrow, Helvetica, sans-serif;
+  font-weight: 400;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'BentonSansCond-Bold';
+  src: url("https://apps.bostonglobe.com/common/font/bentonsanscond-bold.woff2") format('woff2'), url("https://apps.bostonglobe.com/common/font/bentonsanscond-bold.woff") format('woff');
+  font-weight: 900;
+  font-style: normal;
+}
+.bentonsanscond-bold {
+  font-family: 'BentonSansCond-Bold', Impact, Arial Narrow, Helvetica, sans-serif;
+  font-weight: 900;
+  font-style: normal;
+}
+.loaded-bentonsanscond-bold .bentonsanscond-bold {
+  font-family: 'BentonSansCond-Bold', Impact, Arial Narrow, Helvetica, sans-serif;
+  font-weight: 900;
+  font-style: normal;
+}
+.bg-black {
+  background: #4a4a4a;
+}
+.bg-maroon {
+  background: #6b0a0a;
+}
+.c-confirmed {
+  color: #fc6148;
+}
+.c-deaths {
+  color: #38a1de;
+}
+.c-recovered {
+  color: #52ba59;
+}
+.bg-confirmed {
+  background: #fc6148;
+}
+.bg-deaths {
+  background: #38a1de;
+}
+.bg-recovered {
+  background: #52ba59;
+}
+.graphic__select {
+  display: flex;
+}
+.graphic__text {
+  margin: 0.5rem 0;
+}
+.graphic__text--hed {
+  font-weight: bold;
+  font-size: 1.3rem;
+}
+@media only screen and (min-width: 40em) {
+  .graphic__text--hed {
+    font-size: 1.5rem;
+  }
+}
+.graphic__text--subhed {
+  font-size: 1rem;
+  margin-bottom: 1rem;
+}
+.graphic__legend {
+  margin: 0.5rem auto;
+}
+.source-and-credit {
+  clear: both;
+  width: 100%;
+  overflow: hidden;
+  margin-top: 1em;
+}
+.source-and-credit p {
+  line-height: 1.6;
+  padding: 0;
+  margin: 0.5em 0;
+  padding-left: 0.25em;
+  font-size: 14px;
+  text-align: left;
+  float: none;
+}
+.source-and-credit .source span {
+  font-weight: normal;
+}
+@media only screen and (min-width: 40em) {
+  .source-and-credit .source span {
+    float: left;
+  }
+}
+.source-and-credit .credit span {
+  text-transform: uppercase;
+  font-size: 13px;
+}
+@media only screen and (min-width: 40em) {
+  .source-and-credit .credit span {
+    text-align: right;
+    float: right;
+  }
+}
+main,
+.list-container,
+.legend,
+#container {
+  display: block;
+  text-align: center;
+}
+#chart {
+  margin: 1em auto;
+}
+p {
+  font-size: 18px;
+  text-align: center;
+}
+h1 {
+  text-align: center;
+  font-size: 50px;
+  font-weight: 600;
+  color: #000;
+  margin: 2em 0 0.5em;
+}
+.date-slider-container {
+  display: flex;
+  justify-content: center;
+}
+.date-slider {
+  width: 20rem;
+  cursor: pointer;
+}
+.btn {
+  display: inline-block;
+  text-align: center;
+  overflow: visible;
+  vertical-align: top;
+  font-size: 100%;
+  text-decoration: none;
+  border-radius: 3px;
+  font-style: normal;
+  font-weight: 700;
+  transition: all 0.1s ease;
+  margin: 0.25rem 1rem;
+  cursor: pointer;
+  border-radius: 15px;
+  text-align: left;
+  margin: 10px 10px 0px 0px;
+  padding: 6px 12px;
+  letter-spacing: 1px;
+}
+.btn:hover {
+  background: #e0e0c7;
+}
+#chart {
+  width: 100vw;
+  height: 500px;
+  position: relative;
+}
+.tooltip {
+  position: absolute;
+  left: 0px;
+  top: 0px;
+  visibility: hidden;
+  box-shadow: 2px 2px rgba(102,101,101,0.5);
+  padding: 0.5em 1em;
+  line-height: 1.5em;
+  pointer-events: none;
+  max-width: 300px;
+  color: #444;
+  background: #fff;
+  text-align: left;
+}
+@media only screen and (min-width: 40em) {
+  .tooltip {
+    max-width: 400px;
+  }
+}
+.legend {
+  margin-bottom: 1em;
+}
+.legend-box {
+  width: 20px;
+  height: 20px;
+  display: inline-block;
+  border-radius: 50%;
+  vertical-align: text-bottom;
+  margin-left: 0.5rem;
+}
+.legend-box-1 {
+  background: #80a4ed;
+}
+.legend-box-2 {
+  background: #e0ca3c;
+}
+.legend-box-3 {
+  background: #a62639;
+}
+.legend-box-4 {
+  background: #85bb65;
+}
+.legend-box-5 {
+  background: #aba194;
+}
+.nodeLabel {
+  fill: #fff;
+  font-size: 11px;
+}
+@media only screen and (min-width: 40em) {
+  .nodeLabel {
+    font-size: 12px;
+  }
+}
+.nodeCircle {
+  opacity: 0.8;
+/* mix-blend-mode: multiply; */
+}
+.nodeCircle:hover {
+  cursor: pointer;
+}
+.nodeCircle.highlight {
+  stroke: #000;
+}

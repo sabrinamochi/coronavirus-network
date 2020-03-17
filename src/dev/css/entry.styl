@@ -1,0 +1,223 @@
+//=======================
+// Base
+//=======================
+// Add whichever you need or, preferably, just copy the code from those files. Especially the breakpoints and helper variables
+// @require 'base/reset'
+@require 'base/variables'
+@require 'base/helpers'
+@require 'base/colors'
+// @require 'base/layout'
+// @require 'base/unicode'
+@require 'base/fonts'
+
+//=======================
+// Fonts
+//=======================
+// See base/fonts for full listing
+// If you need set-font, make sure to include the base/fonts file
+// Note all projects require Benton Bold and Miller-Regular so don't change em
+
+// Just set these classes in the HTML
+set-font('benton-bold') /* Graphic headlines */
+set-font('benton-regular') /* Graphic subheads */
+set-font('bentonsanscond-regular') /* Graphic byline and source */
+set-font('bentonsanscond-bold')
+
+.bg-black
+  background #4A4A4A
+
+.bg-maroon
+  background #6B0A0A
+
+.c
+  &-confirmed
+    color #FC6148
+
+  &-deaths
+    color #38A1DE
+
+  &-recovered
+    color #52BA59
+
+.bg
+  &-confirmed
+    background #FC6148
+
+  &-deaths
+    background #38A1DE
+
+  &-recovered
+    background #52BA59
+
+
+.graphic
+  &__select
+    display flex
+
+   &__text
+    margin .5rem 0
+
+    &--hed
+      font-weight bold
+      font-size 1.3rem
+      +mq('bp-2')
+        font-size 1.5rem
+
+    &--subhed
+      font-size 1rem
+      margin-bottom 1rem
+
+  &__legend
+    margin .5rem auto
+
+.source-and-credit
+  clear both
+  width 100%
+  overflow hidden
+  margin-top 1em
+
+  p
+    line-height 1.6
+    padding 0
+    margin .5em 0
+    padding-left .25em
+    font-size 14px
+    text-align left
+    float none
+
+  .source span
+    font-weight normal
+    +mq('bp-2')
+      float left
+
+  .credit span
+    text-transform uppercase
+    font-size 13px
+    +mq('bp-2')
+      text-align right
+      float right
+
+
+main,
+.list-container,
+.legend,
+#container
+  display: block;
+  text-align: center;
+
+#chart
+  margin 1em auto
+  width: 100vw;
+  height: 500px;
+  position: relative;
+  +mq(bp-2)
+    height 600px
+
+p {
+  font-size: 18px;
+  text-align: center;
+}
+
+h1 {
+  text-align: center;
+  font-size: 50px;
+  font-weight: 600;
+  color: black;
+  margin: 2em 0 .5em;
+}
+
+.date-slider-container {
+  display: flex;
+  justify-content: center;
+}
+
+.date-slider{
+  width: 20rem;
+  cursor: pointer;
+}
+
+.btn
+  display: inline-block;
+  text-align: center;
+  overflow: visible;
+  vertical-align: top;
+  font-size: 100%;
+  text-decoration: none;
+  border-radius: 3px;
+  font-style: normal;
+  font-weight: 700;
+  transition: all .1s ease;
+  margin 0.25rem 1rem
+  cursor pointer
+  border-radius 15px
+  text-align left
+  margin 10px 10px 0px 0px
+  padding 6px 12px
+  letter-spacing 1px
+  &:hover
+    background darken($beige, 10)
+
+.tooltip
+  position: absolute;
+  left: 0px;
+  top: 0px;
+  visibility: hidden;
+  box-shadow: 2px 2px rgba(102, 101, 101, 0.5);
+  padding: .5em 1em;
+  line-height: 1.5em;
+  pointer-events: none;
+  max-width: 300px;
+  color: $black-hed;
+  background: #fff;
+  text-align left
+  +mq(bp-2)
+    max-width 400px
+
+.legend
+  margin-bottom 1em
+
+.legend-box {
+  width: 20px;
+  height: 20px;
+  display: inline-block;
+  border-radius: 50%;
+  vertical-align: text-bottom;
+  margin-left: 0.5rem;
+}
+
+.legend-box-1 {
+  background: #80a4ed;
+}
+
+.legend-box-2 {
+  background: #E0CA3C;
+}
+
+.legend-box-3 {
+  background: #A62639;
+}
+
+.legend-box-4 {
+  background: #85bb65;
+}
+
+.legend-box-5 {
+  background: #aba194;
+}
+
+
+.nodeLabel
+  fill rgb(255,255,255)
+  font-size 10px
+  cursor pointer
+  +mq(bp-2)
+    font-size 12px
+
+
+.nodeCircle
+  opacity: 0.8;
+  /* mix-blend-mode: multiply; */
+  &:hover
+    cursor: pointer;
+  &.highlight
+    stroke $black
