@@ -32,7 +32,7 @@ const circlePadding = 2;
 const nodeG = svg.append('g').attr('class', 'nodeG');
 var nodeParent = nodeG.selectAll('.circleGroup');
 const xCenter = [width / 3, width * 2 / 6, 0.66 * width];
-const yCenter = [height / 10, height * 3 / 8, height * 5 / 8, height * 7 / 8];
+const yCenter = [height / 8, height * 3 / 8, height * 5 / 8, height * 7 / 8];
 
 const forceX = d3.forceX()
   .x(d => xCenter[d.xCluster])
@@ -55,7 +55,7 @@ const center = d3.forceCenter()
   .y(height / 2);
 
 const groupingForce = forceInABox()
-  .strength(smallScreen ? 0.2 : 0.25) // Strength to foci
+  .strength(smallScreen ? 0.2 : 0.3) // Strength to foci
   .template('force') // Either treemap or force
   .groupBy('type') // Node attribute to group
   .size([width, height])
@@ -257,6 +257,7 @@ function drawPlot(nodes) {
 
   simulation.tick(300);
   ticked();
+  window.pymChild.sendHeight();
   // simulation.alpha(1).restart();
 }
 
