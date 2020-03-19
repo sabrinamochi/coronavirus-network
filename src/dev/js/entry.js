@@ -11,7 +11,7 @@ const svg = chartDiv
 
 const smallScreen = window.innerWidth < 500 ? true : false;
 const getRadius = () => {
-  if (window.innerWidth <= 500) return 9;
+  if (window.innerWidth <= 500) return 8;
   if (window.innerWidth > 500 & window.innerWidth < 768) {
     return 11;
   }
@@ -19,11 +19,11 @@ const getRadius = () => {
 };
 
 const getCharge = () => {
-  if (window.innerWidth <= 500) return -40;
+  if (window.innerWidth <= 500) return -30;
   if (window.innerWidth > 500 & window.innerWidth < 768) {
-    return -100;
+    return -90;
   }
-  return -120;
+  return -100;
 };
 
 // Chart
@@ -102,86 +102,6 @@ csv('assets/cases_in_NewEngland.csv', (err, dataset) => {
   });
   // initial state
   drawPlot(processData(initialData));
-
-  //   // Slider
-  //   var sliderData = dataset.map(function (d) {
-  //       if (d.date !== "") {
-  //           return d.date;
-  //       }
-  //   });
-  //   sliderData = sliderData.filter(uniqueData);
-  //   sliderData.shift(); // Remove Feb 1
-
-  //   dateToNumberScale = d3.scaleOrdinal()
-  //       .domain(sliderData)
-  //       .range(d3.range(0, sliderData.length, 1));
-
-  //   // custom invert function
-  //   dateToNumberScale.invert = (function () {
-  //       var domain = dateToNumberScale.domain()
-  //       var range = dateToNumberScale.range()
-  //       var scale = d3.scaleOrdinal()
-  //       .domain(range)
-  //       .range(domain);
-
-  //       return function (x) {
-  //           return scale(x)
-  //       }
-  //   })();
-
-  //   var step = 1;
-  //   let timer;
-  //   var minDate = dateToNumberScale(sliderData[0]);
-  //   var maxDate = dateToNumberScale(sliderData[sliderData.length - 1]);
-
-  //   dateSlider.step = step;
-  //   dateSlider.min = minDate;
-  //   dateSlider.max = maxDate;
-  //   dateSlider.value = maxDate;
-
-  //   initialValue = d3.min(d3.range(0, sliderData.length, 1));
-  //   targetValue = d3.max(d3.range(0, sliderData.length, 1));
-
-  //   currentValue = targetValue;
-  //   dateOutput.innerHTML = dateToNumberScale.invert(currentValue);
-
-  //   dateSlider.oninput = function () {
-  //     buttonClicked++;
-  //     currentValue = +this.value;
-  //     updateData(currentValue, dataset);
-  //   }
-
-  //   playButton.on("click", function () {
-  //     var button = d3.select(this);
-  //     if (button.text() === "Pause") {
-  //       moving = false;
-  //       clearInterval(timer);
-  //       button.text("Play");
-  //     } else {
-  //       moving = true;
-  //       timer = setInterval(sliderMove, 1000);
-  //       button.text("Pause");
-  //     }
-  //   });
-
-  //   function sliderMove() {
-  //     buttonClicked++;
-  //     if (buttonClicked === 1) {
-  //       currentValue = 0;
-  //     } else {
-  //       currentValue = currentValue + step;
-  //     }
-
-  //     if (currentValue > targetValue - 1) {
-  //       moving = false;
-  //       clearInterval(timer);
-  //       playButton.text("Play");
-  //       buttonClicked = 0;
-  //     }
-
-  //     dateSlider.value = currentValue;
-  //     updateData(currentValue, dataset);
-  //   }
 });
 
 function updateData(value, data) {
@@ -306,12 +226,11 @@ function drawNodes(data) {
   nodeParent = nodeParentEnter.merge(nodeParent);
 
   d3.selectAll(".nodeCircle")
-    .on("mouseover", function (d) {
+    .on('mouseover', function (d) {
       const mouseCoords = d3.mouse(this);
         const details = d.details.length ? `Details: ${d.details}` : '';
         const description = `
           Location: ${d.location}<br>
-          Case type: ${d.caseType.charAt(0).toUpperCase() + d.caseType.slice(1)}<br>
           Date: ${d.date}<br>
           ${details}
         `;
@@ -344,7 +263,6 @@ function drawNodes(data) {
         const details = d.details.length ? `Details: ${d.details}` : '';
         const description = `
           Location: ${d.location}<br>
-          Case type: ${d.caseType.charAt(0).toUpperCase() + d.caseType.slice(1)}<br>
           Date: ${d.date}<br>
           ${details}
         `;
